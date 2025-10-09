@@ -8,10 +8,10 @@ const unsubscribe = (ip) =>{
     subscriptionService.delete(ip);
 }
 
-const publish = (msg) =>{
+const publish = (topic, msg) =>{
     subscriptionService.forEach((ws) => {
         if (ws.readyState === ws.OPEN)
-            ws.send(msg);
+            ws.send(JSON.stringify({topic: topic, message: msg}));
     });
 }
 

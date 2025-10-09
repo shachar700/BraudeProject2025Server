@@ -3,17 +3,19 @@ export class StationStatus {
     /**
      * @param {number} station_id - Unique identifier for the station
      * @param {string} current_cart_id - ID or name of the current cart
+     * @param {string} old_cart_id - ID or name of the current cart
      * @param {Date} [timestamp=new Date()] - Optional timestamp (defaults to now)
      */
-    constructor(station_id, current_cart_id, timestamp = new Date()) {
+    constructor(station_id, current_cart_id, old_cart_id, timestamp = new Date()) {
         this.station_id = station_id;
         this.current_cart_id = current_cart_id;
+        this.old_cart_id = old_cart_id;
         this.timestamp = timestamp;
     }
 
     // Convert to string for debugging or logging
     toString() {
-        return `Station ${this.station_id}: Current cart - ${this.current_cart_id} (updated at ${this.timestamp.toISOString()})`;
+        return `StationStatus(station_id=${this.station_id}, current_cart_id='${this.current_cart_id}', old_cart_id='${this.old_cart_id}', timestamp=${this.timestamp.toISOString()})`;
     }
 
     // Optional: Convert to JSON
@@ -21,6 +23,7 @@ export class StationStatus {
         return {
             station_id: this.station_id,
             current_cart_id: this.current_cart_id,
+            old_cart_id: this.old_cart_id,
             timestamp: this.timestamp.toISOString(),
         };
     }
@@ -30,7 +33,7 @@ export class StationStatus {
         return new StationStatus(
             json.station_id,
             json.current_cart_id,
-            new Date(json.timestamp)
+            json.old_cart_id
         );
     }
 }
@@ -52,12 +55,6 @@ export class SystemStatus {
         this.timestamp = new Date();
     }
 
-    // Update a specific station's occupant
-    setStationOccupant(stationId, cartId) {
-        this.stationOccupants.set(stationId, cartId);
-        this.refreshTimestamp();
-    }
-
     // Convert to plain JSON (for network or logging)
     toJSON() {
         return {
@@ -67,6 +64,24 @@ export class SystemStatus {
         };
     }
 
+    /**
+     * @param {StationStatus} stationStatus - List of all carts in the system
+     */
+    update(stationStatus) {
+        this.stationOccupants.set(stationStatus.station_id, stationStatus.current_cart_id);
+        this.refreshTimestamp();
+    }
+
+    toString() {
+        const cartsStr = this.carts.map(cart => cart.toString()).join(', ');
+
+        const stationOccupantsStr = Array.from(this.stationOccupants.entries())
+            .map(([stationId, cartId]) => `${stationId}: '${cartId}'`)
+            .join(', ');
+
+        return `SystemStatus(timestamp=${this.timestamp.toISOString()}, carts=[${cartsStr}], stationOccupants={${stationOccupantsStr}})`;
+    }
+
     // Recreate from JSON
     static fromJSON(json) {
         return new SystemStatus(
@@ -74,10 +89,5 @@ export class SystemStatus {
             new Map(json.stationOccupants),
             new Date(json.timestamp)
         );
-    }
-
-    // Optional: readable string representation
-    toString() {
-        return `SystemStatus @ ${this.timestamp.toISOString()} | Stations: ${this.stationOccupants.size}, Carts: ${this.carts.length}`;
     }
 }

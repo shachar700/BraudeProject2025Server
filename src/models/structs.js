@@ -27,8 +27,7 @@ export class CartInfo {
         return new CartInfo(json.id, json.speed);
     }
 
-    // Readable string for logging
     toString() {
-        return `Cart ${this.id}: speed=${this.speed}`;
+        return `CartInfo(id=${this.id}, speed=${this.speed})`;
     }
 }

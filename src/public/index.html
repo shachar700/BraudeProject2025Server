@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+        body { font-family: sans-serif; padding: 1rem; }
+        h2 { margin-top: 2rem; }
+        pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
+        button { margin-bottom: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Logging page</h1>
+
+    <h2>Connection Status</h2>
+    <pre id="statusPre">Waiting for status...</pre>
+
+    <button id="toggleBtn">Switch to localhost</button>
+
+    <h2>Current System Status</h2>
+    <pre id="currSSMessages">Waiting for message...</pre>
+
+    <h2>Mqtt Messages</h2>
+    <pre id="mqttPre">Waiting for messages...</pre>
+
+    <h2>System Status Messages</h2>
+    <pre id="ssMessages">Waiting for messages...</pre>
+    <script>
+        // Connect to your WebSocket server
+        const REMOTE_URL = 'wss://braudeproject2025server.onrender.com/';
+        const LOCAL_URL = 'ws://localhost:5000/';
+        const statusPre = document.getElementById('statusPre');
+        const mqttPre = document.getElementById('mqttPre');
+        const ssPre = document.getElementById('ssMessages');
+        const currSSPre = document.getElementById('currSSMessages');
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        let currentUrl = REMOTE_URL;
+        let ws;
+
+        function connectWebSocket(url) {
+            if (ws) ws.close();
+
+            statusPre.textContent = 'Connecting to ' + url + ' ...';
+            ws = new WebSocket(url);
+
+            ws.onopen = () => {
+                console.log('Connection opened (' + ws.url + ')');
+                statusPre.textContent = 'Connected to ' + url;
+            };
+
+            ws.onmessage = (event) => {
+                console.log('Message from server:', event.data);
+                let data = event.data;
+                try { data = JSON.parse(data); } catch {}
+                if (data.topic === 'system_status'){
+                    currSSPre.textContent = JSON.stringify(data.message, null, 2);
+                    prependMessage(ssPre, data.message);
+                }
+                else if (data.topic === 'mqtt'){
+                    prependMessage(mqttPre, data.message);
+                }
+            };
+
+            // ws.onclose = () => {
+            //     console.log('Connection closed (' + ws.url + ')');
+            //     // statusPre.textContent = 'Connection closed (' + url + ')';
+            // };
+
+            ws.onerror = (err) => {
+                console.error('WebSocket error:', err);
+                statusPre.textContent = 'Connection error: ' + err.message;
+            };
+        }
+
+        function prependMessage(pre, msg) {
+            const text = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+            if (pre.textContent === 'Waiting for messages...') pre.textContent = '';
+            pre.textContent = text + '\n' + pre.textContent;
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            console.error('WebSocket trying to disconnected');
+            ws.close(1000, "Manual disconnect")
+
+            if (currentUrl === REMOTE_URL) {
+                currentUrl = LOCAL_URL;
+                toggleBtn.textContent = 'Switch to remote';
+            } else {
+                currentUrl = REMOTE_URL;
+                toggleBtn.textContent = 'Switch to localhost';
+            }
+            connectWebSocket(currentUrl);
+        });
+
+        // Connect initially to remote server
+        connectWebSocket(currentUrl);
+
+
+    </script>
+</body>
+</html>
