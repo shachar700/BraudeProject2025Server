@@ -64,4 +64,4 @@ while True:
       if lastQR2 == lastQR1:
         sendMessage(QR1_id, lastQR1, EMPTY_STATION_CART_ID)
         lastQR1 = EMPTY_STATION_CART_ID
-  wait_ms(2)
+  wait_ms(10)
