@@ -39,8 +39,8 @@ QR2_id = 2
 
 
 def sendMessage(station_id, old_cart_id, current_cart_id):
-    label0.setText('publish MQTT Message..')
-     m5mqtt.publish(str('braude/D106/prodLine/qr'), str((py_2_json({'current_cart_id':current_cart_id,'old_cart_id':old_cart_id,'station_id':int(station_id)}))), 0)
+  label0.setText('publish MQTT Message..')
+  m5mqtt.publish(str('braude/D106/prodLine/qr'), str((py_2_json({'current_cart_id':current_cart_id,'old_cart_id':old_cart_id,'station_id':int(station_id)}))), 0)
      
       
 while True:
