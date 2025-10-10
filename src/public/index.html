@@ -93,7 +93,7 @@
             };
 
             ws.onmessage = (event) => {
-                console.log('Message from server:', event.data);
+                // console.log('Message from server:', event.data);
                 let data = event.data;
                 try { data = JSON.parse(data); } catch {}
                 if (data.topic === 'system_status'){
