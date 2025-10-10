@@ -7,36 +7,20 @@ const path = require('path');
 // const {subscriber} = require('./models/SubscribersManager');
 
 // setup for the mqtt connection and topics
-const mqtt = require('./services/MqttConnection');
+require('./services/MqttConnection');
 
-const {publish} = require("./services/WebSocketService");
 
 const app = express();
 
 // Middleware
+app.use(express.json());
 app.use(logger)
 app.use(errorHandler);
 
 // Routes
-app.get('/about', (req, res) => {
-    res.send(`Hello There!`);
-});
+const simRoutes = require("./routes/simRoutes");
+app.use('/sim', simRoutes)
 
-app.get('/about1', (req, res) => {
-    res.send(`Hello There!111111111111`);
-});
-
-app.get('/subscribe', (req, res) => {
-    const ip = req.ip;
-    // subscriber.subscribe(ip);
-    res.json({message: `User ${ip} subscribed`});
-});
-
-app.get('/unsubscribe', (req, res) => {
-    const ip = req.ip;
-    // subscriber.unsubscribe(ip);
-    res.json({message: `User ${ip} unsubscribed`});
-});
 app.use(express.static(path.join(__dirname, './public')));
 
 module.exports = app;

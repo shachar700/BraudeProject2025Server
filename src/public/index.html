@@ -4,6 +4,7 @@
 
     <style>
         body { font-family: sans-serif; padding: 1rem; }
+        h1 { text-decoration: underline}
         summary { margin-top: 2rem; font-size: 1.5rem; font-weight: bold; }
         pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
         button { margin-left: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
@@ -35,16 +36,17 @@
     </script>
 </head>
 <body>
-    <h1>Logging page</h1>
+    <h1>Braude Project 2025 - Nimbus</h1>
+    <h4>Created by Shlomi Fridman and Shahar Berenson</h4>
+    <br>
 
+    <h2>Connection Status</h2>
     <div class="connection-control">
         <label for="wsAddress">WebSocket URL:</label>
         <input id="wsAddress" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
         <button id="connectBtn">Connect</button>
         <button id="toggleBtn">Switch to localhost</button>
     </div>
-
-    <h2>Connection Status</h2>
     <pre id="statusPre">Waiting for status...</pre>
 
 

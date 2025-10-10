@@ -1,5 +1,5 @@
 
-export class CartInfo {
+class CartInfo {
     /**
      * @param {string} id - Unique identifier for the cart
      * @param {number} [speed=0] - Current speed of the cart
@@ -31,3 +31,13 @@ export class CartInfo {
         return `CartInfo(id=${this.id}, speed=${this.speed})`;
     }
 }
+
+class StationOccupancy{
+
+    constructor(oldCart, newCart) {
+        this.oldCart = oldCart;
+        this.newCart = newCart;
+    }
+}
+
+module.exports = {CartInfo, StationOccupancy}

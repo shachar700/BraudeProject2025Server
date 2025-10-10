@@ -1,5 +1,6 @@
+const {StationOccupancy} = require("./structs");
 
-export class StationStatus {
+class StationStatus {
     /**
      * @param {number} station_id - Unique identifier for the station
      * @param {string} current_cart_id - ID or name of the current cart
@@ -38,10 +39,10 @@ export class StationStatus {
     }
 }
 
-export class SystemStatus {
+class SystemStatus {
     /**
      * @param {Array<CartInfo>} carts - List of all carts in the system
-     * @param {Map<number, string>} stationOccupants - Maps station_id → cart_id
+     * @param {Map<number, StationOccupancy>} stationOccupants - Maps station_id → cart_id
      * @param {Date} [timestamp=new Date()] - Timestamp of the system status (defaults to now)
      */
     constructor(carts = [], stationOccupants = new Map(), timestamp = new Date()) {
@@ -57,18 +58,19 @@ export class SystemStatus {
 
     // Convert to plain JSON (for network or logging)
     toJSON() {
-        return {
+        let json =  {
             carts: this.carts,
-            stationOccupants: Array.from(this.stationOccupants.entries()),
+            stationOccupants: Object.fromEntries(this.stationOccupants.entries()),
             timestamp: this.timestamp.toISOString(),
         };
+        return json;
     }
 
     /**
      * @param {StationStatus} stationStatus - List of all carts in the system
      */
     update(stationStatus) {
-        this.stationOccupants.set(stationStatus.station_id, stationStatus.current_cart_id);
+        this.stationOccupants.set(stationStatus.station_id, new StationOccupancy(stationStatus.old_cart_id, stationStatus.current_cart_id));
         this.refreshTimestamp();
     }
 
@@ -91,3 +93,5 @@ export class SystemStatus {
         );
     }
 }
+
+module.exports = {StationStatus, SystemStatus};
