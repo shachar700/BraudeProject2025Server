@@ -1,6 +1,6 @@
 const {StationStatus} = require("../models/messages");
 const systemStatusManager = require("../models/systemStatusManager");
-const {publish} = require("../services/SubscriptionService");
+const {publish} = require("../services/WebSocketService");
 const {PublisherTopics} = require("../models/enums");
 
 handleQRMessage = (msg) =>{

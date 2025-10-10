@@ -9,19 +9,19 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 const wss = new WebSocketServer({server});
 
-const {subscribe, unsubscribe, publish} = require('./services/SubscriptionService');
+const {subscribe, unsubscribe, publish} = require('./services/WebSocketService');
 
 wss.on('connection', (ws, req) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    subscribe(ip, ws);
-    console.log("Connection opened: ", ip)
+    subscribe(ws);
+    console.log("Connection opened for ip: ", ip)
+
+    ws.on('close', (code, reason) => {
+        unsubscribe(ws);
+        console.log(`Connection closed (code=${code}, reason='${reason}') for ip: `, ip)
+    })
 })
 
-wss.on('close', () => {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    unsubscribe(ip);
-    console.log("Connection closed: ", ip)
-})
 
 server.listen(PORT, () => {
     const { address, port } = server.address();

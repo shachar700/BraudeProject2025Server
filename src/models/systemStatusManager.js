@@ -1,6 +1,6 @@
 const {SystemStatus} = require("./messages");
 const {StationIDs, CartIDs, PublisherTopics} = require("./enums");
-const {publish} = require("../services/SubscriptionService");
+const {publish} = require("../services/WebSocketService");
 const config = require("../../config");
 
 const systemStatusManager = new SystemStatus();

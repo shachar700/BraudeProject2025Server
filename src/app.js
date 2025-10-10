@@ -9,7 +9,7 @@ const path = require('path');
 // setup for the mqtt connection and topics
 const mqtt = require('./services/MqttConnection');
 
-const {publish} = require("./services/SubscriptionService");
+const {publish} = require("./services/WebSocketService");
 
 const app = express();
 
