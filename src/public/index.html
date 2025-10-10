@@ -4,27 +4,65 @@
 
     <style>
         body { font-family: sans-serif; padding: 1rem; }
-        h2 { margin-top: 2rem; }
+        summary { margin-top: 2rem; font-size: 1.5rem; font-weight: bold; }
         pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
-        button { margin-bottom: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+        button { margin-left: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+        input { width: 350px; padding: 0.5rem; }
+        .connection-control { margin-bottom: 1rem; }
     </style>
+    <script>
+        class Queue {
+            constructor(limit = 10) {
+                this.limit = limit;
+                this.items = [];
+            }
+
+            enqueue(item) {
+                // Add to queue
+                this.items.push(item);
+
+                // Keep only the last 'limit' items
+                if (this.items.length > this.limit) {
+                    this.items.shift(); // remove oldest
+                }
+            }
+
+            getReversed() {
+                // Return newest → oldest
+                return [...this.items].reverse();
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Logging page</h1>
 
+    <div class="connection-control">
+        <label for="wsAddress">WebSocket URL:</label>
+        <input id="wsAddress" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+        <button id="connectBtn">Connect</button>
+        <button id="toggleBtn">Switch to localhost</button>
+    </div>
+
     <h2>Connection Status</h2>
     <pre id="statusPre">Waiting for status...</pre>
 
-    <button id="toggleBtn">Switch to localhost</button>
 
-    <h2>Current System Status</h2>
-    <pre id="currSSMessages">Waiting for message...</pre>
+    <details open>
+        <summary>Current System Status</summary>
+        <pre id="currSSMessages">Waiting for message...</pre>
+    </details>
 
-    <h2>Mqtt Messages</h2>
-    <pre id="mqttPre">Waiting for messages...</pre>
+    <details>
+        <summary>Mqtt Messages</summary>
+        <pre id="mqttPre">Waiting for messages...</pre>
+    </details>
 
-    <h2>System Status Messages</h2>
-    <pre id="ssMessages">Waiting for messages...</pre>
+    <details>
+        <summary>System Status Messages</summary>
+        <pre id="ssMessages">Waiting for messages...</pre>
+    </details>
+
     <script>
         // Connect to your WebSocket server
         const REMOTE_URL = 'wss://braudeproject2025server.onrender.com/';
@@ -34,6 +72,11 @@
         const ssPre = document.getElementById('ssMessages');
         const currSSPre = document.getElementById('currSSMessages');
         const toggleBtn = document.getElementById('toggleBtn');
+        const connectBtn = document.getElementById('connectBtn');
+        const wsAddressInput = document.getElementById('wsAddress');
+
+        const mqttQueue = new Queue(100);
+        const ssQueue = new Queue(100);
 
         let currentUrl = REMOTE_URL;
         let ws;
@@ -55,10 +98,12 @@
                 try { data = JSON.parse(data); } catch {}
                 if (data.topic === 'system_status'){
                     currSSPre.textContent = JSON.stringify(data.message, null, 2);
-                    prependMessage(ssPre, data.message);
+                    ssQueue.enqueue(data.message)
+                    prependMessage(ssPre, ssQueue);
                 }
                 else if (data.topic === 'mqtt'){
-                    prependMessage(mqttPre, data.message);
+                    mqttQueue.enqueue(data.message)
+                    prependMessage(mqttPre, mqttQueue);
                 }
             };
 
@@ -69,14 +114,15 @@
 
             ws.onerror = (err) => {
                 console.error('WebSocket error:', err);
-                statusPre.textContent = 'Connection error: ' + err.message;
+                statusPre.textContent = 'Connection error to ' + currentUrl;
             };
         }
 
-        function prependMessage(pre, msg) {
-            const text = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+        function prependMessage(pre, queue) {
+            const items = queue.getReversed();
+            const text = items.map(tmp => JSON.stringify(tmp, null, 2)).join('\n---------------------------------------\n');
             if (pre.textContent === 'Waiting for messages...') pre.textContent = '';
-            pre.textContent = text + '\n' + pre.textContent;
+            pre.textContent = text;
         }
 
         toggleBtn.addEventListener('click', () => {
@@ -85,16 +131,28 @@
 
             if (currentUrl === REMOTE_URL) {
                 currentUrl = LOCAL_URL;
+                wsAddressInput.value = LOCAL_URL;
                 toggleBtn.textContent = 'Switch to remote';
             } else {
                 currentUrl = REMOTE_URL;
+                wsAddressInput.value = REMOTE_URL;
                 toggleBtn.textContent = 'Switch to localhost';
             }
             connectWebSocket(currentUrl);
         });
 
         // Connect initially to remote server
-        connectWebSocket(currentUrl);
+        connectBtn.addEventListener('click', () => {
+            const url = wsAddressInput.value.trim();
+            if (!url) {
+                alert('Please enter a WebSocket URL.');
+                return;
+            }
+            connectWebSocket(url);
+        });
+
+        // Auto-connect to default URL
+        connectWebSocket(wsAddressInput.value);
 
 
     </script>
