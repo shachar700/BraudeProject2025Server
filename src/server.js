@@ -13,8 +13,18 @@ const {subscribe, unsubscribe, publish} = require('./services/WebSocketService')
 
 wss.on('connection', (ws, req) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    subscribe(ws);
-    console.log("Connection opened for ip: ", ip)
+    console.log("Connection from ip: ", ip)
+
+    ws.on('message', (msg) => {
+        const topic = msg.toString();
+        console.log(`Received topic from ip='${ip}', topic=: `, topic);
+        if (subscribe(topic, ws)){
+            console.log(`Subscribed to topic`);
+        }
+        else{
+            console.log('Invalid topic');
+        }
+    })
 
     ws.on('close', (code, reason) => {
         unsubscribe(ws);

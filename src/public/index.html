@@ -92,6 +92,9 @@
             ws.onopen = () => {
                 console.log('Connection opened (' + ws.url + ')');
                 statusPre.textContent = 'Connected to ' + url;
+                ws.send("system_status");
+                ws.send("log");
+                ws.send("mqtt");
             };
 
             ws.onmessage = (event) => {
