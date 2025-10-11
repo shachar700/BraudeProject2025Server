@@ -84,7 +84,7 @@
         let ws;
 
         function connectWebSocket(url) {
-            if (ws) ws.close();
+            if (ws) ws.close(1000, "Manual disconnect");
 
             statusPre.textContent = 'Connecting to ' + url + ' ...';
             ws = new WebSocket(url);
@@ -143,6 +143,7 @@
                 wsAddressInput.value = REMOTE_URL;
                 toggleBtn.textContent = 'Switch to localhost';
             }
+            ws = null;
             connectWebSocket(currentUrl);
         });
 

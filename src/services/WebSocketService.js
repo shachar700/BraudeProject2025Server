@@ -22,7 +22,10 @@ const unsubscribe = (ws) =>{
 }
 
 const publish = (topic, msg) =>{
-    for (const ws of webSocketService.get(PublisherTopics.SYSTEM_STATUS)) {
+    if (!webSocketService.has(topic)) {
+        return;
+    }
+    for (const ws of webSocketService.get(topic)) {
         if (ws.readyState === ws.OPEN)
             ws.send(JSON.stringify({topic: topic, message: msg}));
     }
