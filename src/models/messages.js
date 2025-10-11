@@ -1,4 +1,4 @@
-const {StationOccupancy} = require("./structs");
+const {StationOccupancy, CartInfo} = require("./structs");
 
 class StationStatus {
     /**
@@ -69,9 +69,22 @@ class SystemStatus {
     /**
      * @param {StationStatus} stationStatus - List of all carts in the system
      */
-    update(stationStatus) {
+    updateStation(stationStatus) {
         this.stationOccupants.set(stationStatus.station_id, new StationOccupancy(stationStatus.old_cart_id, stationStatus.current_cart_id));
         this.refreshTimestamp();
+    }
+
+    /**
+     * @param {CartInfo} cartInfo - List of all carts in the system
+     */
+    updateCart(cartInfo){
+        const cart = this.carts.find(ci => ci.id === cartInfo.id);
+        if (cart) {
+            cart.speed = cartInfo.speed;
+        }
+        else{
+            this.carts.push(new CartInfo(cartInfo.id, cartInfo.speed));
+        }
     }
 
     toString() {

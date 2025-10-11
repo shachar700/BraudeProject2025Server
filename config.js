@@ -10,5 +10,5 @@ module.exports = {
         port: process.env.MQTT_BROKER_PORT
     },
     SystemStatusPublishIntervalsMs: process.env.SYSTEM_STATUS_PUBLISH_INTERVALS_MS,
-    publishMqttMessage: process.env.publishMqttMessage
+    publishMqttMessage: process.env.PUBLISH_MQTT_MESSAGESS
 }
