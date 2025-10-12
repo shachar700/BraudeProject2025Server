@@ -1,11 +1,11 @@
 
 class CartInfo {
     /**
-     * @param {string} id - Unique identifier for the cart
+     * @param {string} cart_id - Unique identifier for the cart
      * @param {number} [speed=0] - Current speed of the cart
      */
-    constructor(id, speed = 0) {
-        this.id = id;
+    constructor(cart_id, speed = 0) {
+        this.cart_id = cart_id;
         this.speed = speed;
     }
 
@@ -17,14 +17,14 @@ class CartInfo {
     // Convert to plain JSON for transport/storage
     toJSON() {
         return {
-            id: this.id,
+            cart_id: this.cart_id,
             speed: this.speed,
         };
     }
 
     // Recreate from JSON
     static fromJSON(json) {
-        return new CartInfo(json.id, json.speed);
+        return new CartInfo(json.cart_id, json.speed);
     }
 
     toString() {
