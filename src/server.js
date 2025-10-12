@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({server});
 
 const {subscribe, unsubscribe, publish} = require('./services/WebSocketService');
+const {resetSystemStatus} = require("./controllers/SimController");
 
 wss.on('connection', (ws, req) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -17,12 +18,16 @@ wss.on('connection', (ws, req) => {
 
     ws.on('message', (msg) => {
         const topic = msg.toString();
-        console.log(`Received topic from ip='${ip}', topic=: `, topic);
-        if (subscribe(topic, ws)){
-            console.log(`Subscribed to topic`);
+        if (topic === 'system_status_reset'){
+            resetSystemStatus();
         }
-        else{
-            console.log('Invalid topic');
+        else {
+            console.log(`Received topic from ip='${ip}', topic=: `, topic);
+            if (subscribe(topic, ws)) {
+                console.log(`Subscribed to topic`);
+            } else {
+                console.log('Invalid topic');
+            }
         }
     })
 

@@ -23,4 +23,9 @@ simulateIMUMessage = (id, speed) => {
     }
 }
 
-module.exports = {simulateQRMessage, simulateIMUMessage}
+resetSystemStatus = () => {
+    systemStatusManager.reset();
+    console.log("SystemStatus reset successfully");
+}
+
+module.exports = {simulateQRMessage, simulateIMUMessage, resetSystemStatus}

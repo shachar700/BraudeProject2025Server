@@ -1,22 +1,21 @@
 const {StationOccupancy, CartInfo} = require("./structs");
+const {StationIDs, CartIDs} = require("./enums");
 
 class StationStatus {
     /**
      * @param {number} station_id - Unique identifier for the station
      * @param {string} current_cart_id - ID or name of the current cart
      * @param {string} old_cart_id - ID or name of the current cart
-     * @param {Date} [timestamp=new Date()] - Optional timestamp (defaults to now)
      */
-    constructor(station_id, current_cart_id, old_cart_id, timestamp = new Date()) {
+    constructor(station_id, current_cart_id, old_cart_id) {
         this.station_id = station_id;
         this.current_cart_id = current_cart_id;
         this.old_cart_id = old_cart_id;
-        this.timestamp = timestamp;
     }
 
     // Convert to string for debugging or logging
     toString() {
-        return `StationStatus(station_id=${this.station_id}, current_cart_id='${this.current_cart_id}', old_cart_id='${this.old_cart_id}', timestamp=${this.timestamp.toISOString()})`;
+        return `StationStatus(station_id=${this.station_id}, current_cart_id='${this.current_cart_id}', old_cart_id='${this.old_cart_id}'})`;
     }
 
     // Optional: Convert to JSON
@@ -25,7 +24,6 @@ class StationStatus {
             station_id: this.station_id,
             current_cart_id: this.current_cart_id,
             old_cart_id: this.old_cart_id,
-            timestamp: this.timestamp.toISOString(),
         };
     }
 
@@ -49,6 +47,18 @@ class SystemStatus {
         this.carts = carts;
         this.stationOccupants = stationOccupants;
         this.timestamp = timestamp;
+    }
+
+    reset(){
+
+        this.carts = []
+
+        this.stationOccupants.set(StationIDs.STATION_1, {oldCart:CartIDs.cart_empty, newCart:CartIDs.cart_empty});
+        this.stationOccupants.set(StationIDs.STATION_2, {oldCart:CartIDs.cart_empty, newCart:CartIDs.cart_empty});
+        this.stationOccupants.set(StationIDs.STATION_3, {oldCart:CartIDs.cart_empty, newCart:CartIDs.cart_empty});
+        this.stationOccupants.set(StationIDs.STATION_4, {oldCart:CartIDs.cart_empty, newCart:CartIDs.cart_empty});
+
+        this.refreshTimestamp();
     }
 
     // Update timestamp (e.g., after any change)

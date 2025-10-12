@@ -1,6 +1,6 @@
 
 const express = require('express');
-const {simulateQRMessage, simulateIMUMessage} = require("../controllers/SimController");
+const {simulateQRMessage, simulateIMUMessage, resetSystemStatus} = require("../controllers/SimController");
 const router = express.Router();
 
 router.post("/qr", (req, res) => {
@@ -15,6 +15,11 @@ router.post("/imu", (req, res) => {
 
     simulateIMUMessage(id, Number(speed));
     res.status(200).send({message: "Simulated IMU message"});
+});
+
+router.get("/reset", (req, res) => {
+    resetSystemStatus();
+    res.status(200).send({message: "SystemStatus reset successfully"});
 });
 
 module.exports = router;

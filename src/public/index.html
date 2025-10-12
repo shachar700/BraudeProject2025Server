@@ -7,7 +7,7 @@
         h1 { text-decoration: underline}
         summary { margin-top: 2rem; font-size: 1.5rem; font-weight: bold; }
         pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
-        button { margin-left: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+        button { margin: 10px; padding: 0.5rem 1rem; cursor: pointer; }
         input { width: 350px; padding: 0.5rem; }
         .connection-control { margin-bottom: 1rem; }
     </style>
@@ -52,6 +52,7 @@
 
     <details open>
         <summary>Current System Status</summary>
+        <button id="resetBtn">Reset System Status</button>
         <pre id="currSSMessages">Waiting for message...</pre>
     </details>
 
@@ -74,6 +75,7 @@
         const ssPre = document.getElementById('ssMessages');
         const currSSPre = document.getElementById('currSSMessages');
         const toggleBtn = document.getElementById('toggleBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const connectBtn = document.getElementById('connectBtn');
         const wsAddressInput = document.getElementById('wsAddress');
 
@@ -146,6 +148,12 @@
             ws = null;
             connectWebSocket(currentUrl);
         });
+
+        resetBtn.addEventListener('click', () => {
+            if (ws && confirm("Are you sure you want to reset SystemStatus?")) {
+                ws.send("system_status_reset");
+            }
+        })
 
         // Connect initially to remote server
         connectBtn.addEventListener('click', () => {
