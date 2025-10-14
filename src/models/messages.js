@@ -88,12 +88,12 @@ class SystemStatus {
      * @param {CartInfo} cartInfo - List of all carts in the system
      */
     updateCart(cartInfo){
-        const cart = this.carts.find(ci => ci.id === cartInfo.id);
+        const cart = this.carts.find(ci => ci.cart_id === cartInfo.cart_id);
         if (cart) {
             cart.speed = cartInfo.speed;
         }
         else{
-            this.carts.push(new CartInfo(cartInfo.id, cartInfo.speed));
+            this.carts.push(new CartInfo(cartInfo.cart_id, cartInfo.speed));
         }
     }
 

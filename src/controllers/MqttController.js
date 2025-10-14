@@ -8,7 +8,9 @@ const {CartInfo} = require("../models/structs");
 handleQRMessage = (msg) =>{
     const data = msgToObject(msg);
     const stationStatus = StationStatus.fromJSON(data);
-    console.log(`QR msg obj: ${stationStatus}`);
+    if (false) {
+        console.log(`QR msg obj: ${stationStatus}`);
+    }
     systemStatusManager.updateStation(stationStatus);
     if (config.publishMqttMessage) {
         publish(PublisherTopics.MQTT, data);
@@ -18,7 +20,9 @@ handleQRMessage = (msg) =>{
 handleIMUMessage = (msg) =>{
     const data = msgToObject(msg);
     const cartInfo = CartInfo.fromJSON(data);
-    console.log(`IMU msg: ${msg}`);
+    if (false) {
+        console.log(`IMU msg: ${msg}`);
+    }
     systemStatusManager.updateCart(cartInfo);
     if (config.publishMqttMessage) {
         publish(PublisherTopics.MQTT, data);
