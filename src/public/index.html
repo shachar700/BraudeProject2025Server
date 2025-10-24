@@ -54,7 +54,6 @@
 
     <details open>
         <summary>Current System Status</summary>
-        <button id="resetBtn">Reset System Status</button>
         <pre id="currSSMessages">Waiting for message...</pre>
     </details>
 
@@ -77,12 +76,12 @@
         const ssPre = document.getElementById('ssMessages');
         const currSSPre = document.getElementById('currSSMessages');
         const toggleBtn = document.getElementById('toggleBtn');
-        const resetBtn = document.getElementById('resetBtn');
         const connectBtn = document.getElementById('connectBtn');
         const wsAddressInput = document.getElementById('wsAddress');
 
-        const mqttQueue = new Queue(100);
-        const ssQueue = new Queue(100);
+        const maxDisplayedMessages = 300;
+        const mqttQueue = new Queue(maxDisplayedMessages);
+        const ssQueue = new Queue(maxDisplayedMessages);
 
         let currentUrl = REMOTE_URL;
         let ws;
@@ -151,11 +150,11 @@
             connectWebSocket(currentUrl);
         });
 
-        resetBtn.addEventListener('click', () => {
-            if (ws && confirm("Are you sure you want to reset SystemStatus?")) {
-                ws.send("system_status_reset");
-            }
-        })
+        // resetBtn.addEventListener('click', () => {
+        //     if (ws && confirm("Are you sure you want to reset SystemStatus?")) {
+        //         ws.send("system_status_reset");
+        //     }
+        // })
 
         // Connect initially to remote server
         connectBtn.addEventListener('click', () => {

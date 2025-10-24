@@ -56,7 +56,8 @@
 
 
 <details open>
-    <summary>Tests</summary>
+    <summary>Actions</summary>
+    <button id="resetBtn">Reset System Status</button>
     <button id="regressionBtn">Regression Test</button>
 </details>
 
@@ -131,6 +132,7 @@
     const resultDiv = document.getElementById('result');
     const regressionTestBtn = document.getElementById('regressionBtn');
     const toggleBtn = document.getElementById('toggleBtn');
+    const resetBtn = document.getElementById('resetBtn');
     const addressField = document.getElementById('addressField');
     const imuForm = document.getElementById('imuForm');
     const qrForm = document.getElementById('qrForm');
@@ -146,6 +148,22 @@
             currentUrl = REMOTE_URL;
         }
         addressField.value = currentUrl;
+    });
+
+    resetBtn.addEventListener('click', () => {
+        fetch(`${currentUrl}/sim/reset`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
     });
 
     regressionTestBtn.addEventListener('click', () => {
