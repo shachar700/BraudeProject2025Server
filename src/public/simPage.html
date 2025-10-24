@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>PLARA Simulator</title>
+
+    <style>
+        body { font-family: sans-serif; padding: 1rem; }
+        h1 { text-decoration: underline}
+        summary { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: bold; }
+        #result { width: 100%; min-height: 50px; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; white-space: pre-wrap; background-color: #f9f9f9; }
+        pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
+        button { margin: 15px; padding: 0.5rem 1rem; cursor: pointer; }
+        input, select, button { padding: 8px; margin: 5px 0; font-size: 16px; }
+        label {font-weight: bold; }
+        option { font-size: 16px; }
+        form > button {margin-left: 10px}
+    </style>
+    <script>
+        class Queue {
+            constructor(limit = 10) {
+                this.limit = limit;
+                this.items = [];
+            }
+
+            enqueue(item) {
+                // Add to queue
+                this.items.push(item);
+
+                // Keep only the last 'limit' items
+                if (this.items.length > this.limit) {
+                    this.items.shift(); // remove oldest
+                }
+            }
+
+            getReversed() {
+                // Return newest → oldest
+                return [...this.items].reverse();
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Braude Project 2025 - PLARA Simulator</h1>
+<h4>Created by Shlomi Fridman and Shahar Berenson</h4>
+<br>
+
+<h2>Connection Status</h2>
+<div class="connection-control">
+    <label for="addressField">Server URL:</label>
+    <input id="addressField" style="width: 300px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+    <button id="toggleBtn">Switch to localhost</button>
+</div>
+
+<div id="result">Result will appear here...</div>
+
+
+<details open>
+    <summary>Tests</summary>
+    <button id="regressionBtn">Regression Test</button>
+</details>
+
+<details open>
+    <summary>IMU Message</summary>
+
+    <form id="imuForm">
+        <label>
+            Cart ID:
+            <select name="cart_id" required>
+                <option value="cart_1">cart_1</option>
+                <option value="cart_2">cart_2</option>
+                <option value="cart_3">cart_3</option>
+                <option value="cart_4">cart_4</option>
+                <option value="cart_5">cart_5</option>
+            </select>
+        </label>
+        <label>
+            Speed:
+            <input type="number" step="any" name="speed" min="0" required style="width: 70px" value="0.2"/>
+        </label>
+        <button type="submit">Send</button>
+    </form>
+
+</details>
+
+<details open>
+    <summary>QR Message</summary>
+
+    <form id="qrForm">
+        <label>
+            Station ID:
+            <select name="station_id" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </label>
+        <label>
+            Current Cart ID:
+            <select name="current_cart_id" required>
+                <option value="cart_empty" selected>cart_empty</option>
+                <option value="cart_1">cart_1</option>
+                <option value="cart_2">cart_2</option>
+                <option value="cart_3">cart_3</option>
+                <option value="cart_4">cart_4</option>
+                <option value="cart_5">cart_5</option>
+            </select>
+        </label>
+        <label>
+            Old Cart ID:
+            <select name="old_cart_id" required>
+                <option value="cart_empty" selected>cart_empty</option>
+                <option value="cart_1">cart_1</option>
+                <option value="cart_2">cart_2</option>
+                <option value="cart_3">cart_3</option>
+                <option value="cart_4">cart_4</option>
+                <option value="cart_5">cart_5</option>
+            </select>
+        </label>
+        <button type="submit">Send</button>
+    </form>
+
+</details>
+
+<script>
+    // Connect to your WebSocket server
+    const REMOTE_URL = 'https://braudeproject2025server.onrender.com';
+    const LOCAL_URL = 'http://localhost:5000';
+
+    const resultDiv = document.getElementById('result');
+    const regressionTestBtn = document.getElementById('regressionBtn');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const addressField = document.getElementById('addressField');
+    const imuForm = document.getElementById('imuForm');
+    const qrForm = document.getElementById('qrForm');
+
+    let currentUrl = REMOTE_URL;
+
+
+    toggleBtn.addEventListener('click', () => {
+
+        if (currentUrl === REMOTE_URL) {
+            currentUrl = LOCAL_URL;
+        } else {
+            currentUrl = REMOTE_URL;
+        }
+        addressField.value = currentUrl;
+    });
+
+    regressionTestBtn.addEventListener('click', () => {
+        fetch(`${currentUrl}/sim/regressionTest`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
+    });
+
+    imuForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // prevent page reload
+        const formData = new FormData(e.target);
+        const payload = {
+            cart_id: formData.get('cart_id'),
+            speed: parseFloat(formData.get('speed'))
+        };
+
+        resultDiv.textContent = 'Sending POST request...';
+        fetch(`${currentUrl}/sim/imu`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.text();
+            })
+            .then(data => resultDiv.textContent = data)
+            .catch(error => resultDiv.textContent = `Error: ${error}`);
+    });
+
+    qrForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const station_id = parseInt(formData.get('station_id'));
+        console.log(formData.get('station_id'))
+        console.log(formData.get('current_cart_id'))
+        const payload = {
+            station_id: station_id,
+            current_cart_id: formData.get('current_cart_id'),
+            old_cart_id: formData.get('old_cart_id')
+        };
+        resultDiv.textContent = 'Sending Station POST request...';
+        fetch(`${currentUrl}/sim/qr`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.text();
+            })
+            .then(data => resultDiv.textContent = data)
+            .catch(error => resultDiv.textContent = `Error: ${error}`);
+    });
+
+</script>
+</body>
+</html>
