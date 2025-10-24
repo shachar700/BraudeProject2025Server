@@ -48,7 +48,7 @@
 <h2>Connection Status</h2>
 <div class="connection-control">
     <label for="addressField">Server URL:</label>
-    <input id="addressField" style="width: 300px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+    <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
     <button id="toggleBtn">Switch to localhost</button>
 </div>
 
@@ -57,6 +57,7 @@
 
 <details open>
     <summary>Actions</summary>
+    <button id="openViewerBtn">Open Viewer</button>
     <button id="resetBtn">Reset System Status</button>
     <button id="regressionBtn">Regression Test</button>
 </details>
@@ -77,7 +78,7 @@
         </label>
         <label>
             Speed:
-            <input type="number" step="any" name="speed" min="0" required style="width: 70px" value="0.2"/>
+            <input type="number" step="0.1" name="speed" min="0" required style="width: 70px" value="0.2"/>
         </label>
         <button type="submit">Send</button>
     </form>
@@ -131,6 +132,7 @@
 
     const resultDiv = document.getElementById('result');
     const regressionTestBtn = document.getElementById('regressionBtn');
+    const openViewerBtn = document.getElementById('openViewerBtn');
     const toggleBtn = document.getElementById('toggleBtn');
     const resetBtn = document.getElementById('resetBtn');
     const addressField = document.getElementById('addressField');
@@ -138,14 +140,23 @@
     const qrForm = document.getElementById('qrForm');
 
     let currentUrl = REMOTE_URL;
+    addressField.value = currentUrl;
 
+    openViewerBtn.addEventListener('click', () => {
+        const path = window.location.pathname.split('/');
+        path.pop();
+        const newPath = path.join('/') || '/';
+        window.open(newPath, '_blank');
+    })
 
     toggleBtn.addEventListener('click', () => {
 
         if (currentUrl === REMOTE_URL) {
             currentUrl = LOCAL_URL;
+            toggleBtn.textContent = 'Switch to remote';
         } else {
             currentUrl = REMOTE_URL;
+            toggleBtn.textContent = 'Switch to localhost';
         }
         addressField.value = currentUrl;
     });
