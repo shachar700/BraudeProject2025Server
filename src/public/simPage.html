@@ -180,7 +180,7 @@
     });
 
     regressionTestBtn.addEventListener('click', () => {
-        if (!confirm("Are you sure you want to a regression test?"))
+        if (!confirm("Are you sure you want to start a regression test?"))
             return;
         fetch(`${currentUrl}/sim/regressionTest`)
             .then(response => {
