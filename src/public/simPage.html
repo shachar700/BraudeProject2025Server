@@ -162,6 +162,8 @@
     });
 
     resetBtn.addEventListener('click', () => {
+        if (!confirm("Are you sure you want to restart?"))
+            return;
         fetch(`${currentUrl}/sim/reset`)
             .then(response => {
                 if (!response.ok) {
@@ -178,6 +180,8 @@
     });
 
     regressionTestBtn.addEventListener('click', () => {
+        if (!confirm("Are you sure you want to a regression test?"))
+            return;
         fetch(`${currentUrl}/sim/regressionTest`)
             .then(response => {
                 if (!response.ok) {
