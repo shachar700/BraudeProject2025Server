@@ -12,6 +12,7 @@
         button { margin: 10px; padding: 0.5rem 1rem; cursor: pointer; }
         input { width: 350px; padding: 0.5rem; }
         .connection-control { margin-bottom: 1rem; }
+        label {font-weight: bold; }
     </style>
     <script>
         class Queue {
@@ -42,9 +43,9 @@
     <h4>Created by Shlomi Fridman and Shahar Berenson</h4>
     <br>
 
-    <h2>Connection Status</h2>
+<!--    <h2>Connection Status</h2>-->
     <div class="connection-control">
-        <label for="wsAddress">WebSocket URL:</label>
+        <label for="wsAddress">WebSocket URI:</label>
         <input id="wsAddress" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
         <button id="connectBtn">Connect</button>
         <br>
