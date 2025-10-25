@@ -47,7 +47,9 @@
         <label for="wsAddress">WebSocket URL:</label>
         <input id="wsAddress" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
         <button id="connectBtn">Connect</button>
+        <br>
         <button id="toggleBtn">Switch to localhost</button>
+        <button id="openSimBtn">Open Simulator</button>
     </div>
     <pre id="statusPre">Waiting for status...</pre>
 
@@ -77,6 +79,7 @@
         const currSSPre = document.getElementById('currSSMessages');
         const toggleBtn = document.getElementById('toggleBtn');
         const connectBtn = document.getElementById('connectBtn');
+        const openSimBtn = document.getElementById('openSimBtn');
         const wsAddressInput = document.getElementById('wsAddress');
 
         const maxDisplayedMessages = 300;
@@ -132,6 +135,10 @@
             if (pre.textContent === 'Waiting for messages...') pre.textContent = '';
             pre.textContent = text;
         }
+
+        openSimBtn.addEventListener('click', () => {
+            window.open('/sim', '_blank');
+        })
 
         toggleBtn.addEventListener('click', () => {
             console.error('WebSocket trying to disconnected');
