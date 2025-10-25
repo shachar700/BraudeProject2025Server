@@ -8,8 +8,7 @@
         body { font-family: sans-serif; padding: 1rem; }
         h1 { text-decoration: underline}
         summary { margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: bold; }
-        #result { width: 100%; min-height: 50px; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; white-space: pre-wrap; background-color: #f9f9f9; }
-        pre { background: #eee; padding: 1rem; max-height: 500px; overflow-y: auto; }
+        #result { width: 80%; min-height: 20px; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; white-space: pre-wrap; background-color: #eee; }
         button { margin: 10px; padding: 0.5rem 1rem; cursor: pointer; }
         input, select { padding: 8px; margin: 5px 0; font-size: 16px; }
         label {font-weight: bold; }
@@ -47,15 +46,16 @@
 <div class="connection-control">
     <label for="addressField">Server URL:</label>
     <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+    <br>
     <button id="toggleBtn">Switch to localhost</button>
+    <button id="openViewerBtn">Open Viewer</button>
 </div>
 
-<div id="result">Result will appear here...</div>
+<pre id="result">Result will appear here...</pre>
 
 
 <details open>
     <summary>Actions</summary>
-    <button id="openViewerBtn">Open Viewer</button>
     <button id="resetBtn">Reset System Status</button>
     <button id="regressionBtn">Regression Test</button>
 </details>
