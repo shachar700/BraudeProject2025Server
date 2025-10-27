@@ -21,6 +21,7 @@ const CartIDs = Object.freeze({
 
 const PublisherTopics = Object.freeze({
     SYSTEM_STATUS: 'system_status',
+    SYSTEM_RESET: 'system_reset',
     LOG: 'log',
     MQTT: 'mqtt'
 });

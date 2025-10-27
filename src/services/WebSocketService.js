@@ -14,7 +14,7 @@ const subscribe = (topic, ws) =>{
     return false;
 }
 const unsubscribe = (ws) =>{
-    for (const topic of Object.values(PublisherTopics)){
+    for (const topic of webSocketService.keys()){
         if (webSocketService.get(topic).has(ws)){
             webSocketService.get(topic).delete(ws);
         }
