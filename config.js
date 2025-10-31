@@ -11,5 +11,6 @@ module.exports = {
     },
     SystemStatusPublishIntervalsMs: process.env.SYSTEM_STATUS_PUBLISH_INTERVALS_MS,
     publishMqttMessage: (process.env.PUBLISH_MQTT_MESSAGESS === 'true'),
+    publishLogMessage: (process.env.PUBLISH_LOG_MESSAGESS === 'true'),
     logMqttMessage: (process.env.LOG_MQTT_MESSAGESS === 'true')
 }

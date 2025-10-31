@@ -8,22 +8,22 @@ const {clearTimeout} = require("node:timers");
 
 let regressionTestInProgress = null;
 
+logMessage = (msg) =>{
+    console.log(`SimController :: logMessage :: message='${msg}'`);
+    if (config.publishLogMessage)
+        publish(PublisherTopics.LOG, {message:msg, timestamp: new Date()});
+}
+
 simulateQRMessage = (stationId, currCartId, oldCartId) => {
     const stationStatus = new StationStatus(stationId, currCartId, oldCartId);
-    console.log(`simulateQRMessage: ${stationStatus}`);
     systemStatusManager.updateStation(stationStatus);
-    if (config.publishMqttMessage) {
-        publish(PublisherTopics.MQTT, {type: "StationStatus", message: stationStatus});
-    }
+    logMessage(`simulateQRMessage: ${stationStatus}`);
 }
 
 simulateIMUMessage = (cart_id, speed) => {
     const cartInfo = new CartInfo(cart_id, speed);
-    console.log(`simulateIMUMessage: ${cartInfo}`);
     systemStatusManager.updateCart(cartInfo);
-    if (config.publishMqttMessage) {
-        publish(PublisherTopics.MQTT, {type: "CartInfo", message: cartInfo});
-    }
+    logMessage(`simulateIMUMessage: ${cartInfo}`);
 }
 
 const sleep = (ms) => {
@@ -31,21 +31,22 @@ const sleep = (ms) => {
 }
 
 resetSystemStatus = (currentTimeout = null) => {
-    if (currentTimeout || regressionTestInProgress) {
+    if (regressionTestInProgress && (regressionTestInProgress !== currentTimeout)) {
         clearTimeout(regressionTestInProgress);
         regressionTestInProgress = null;
-        console.log("Regression test stopped");
+        logMessage("The running regression test was cancelled");
     }
     systemStatusManager.reset();
-    console.log("SystemStatus reset successfully");
+    logMessage("SystemStatus reset successfully");
     publish(PublisherTopics.SYSTEM_RESET, {message: "SystemStatus reset successfully", timestamp: new Date()});
 }
 
 regressionTest = () => {
     const currentTimeout = setTimeout(async ()=>{
-        console.log("Regression test started");
+        logMessage("Regression test started");
 
         resetSystemStatus(currentTimeout);
+        regressionTestInProgress = currentTimeout;
         await sleep(1000);
         if (regressionTestInProgress === null) return;
 
@@ -83,7 +84,7 @@ regressionTest = () => {
         await sleep(timeBetweenActionsMs);
         if (regressionTestInProgress === null) return;
 
-        console.log("Regression test ended")
+        logMessage("Regression test ended")
 
     }, 0);
 }

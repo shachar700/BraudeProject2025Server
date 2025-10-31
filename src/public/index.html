@@ -55,12 +55,12 @@
         <button id="toggleBtn">Switch to localhost</button>
         <button id="openSimBtn">Open Simulator</button>
     </div>
-    <pre id="statusPre">Waiting for status...</pre>
+    <pre id="connStatusPre">Waiting for status...</pre>
 
 
     <details open>
         <summary>Current System Status</summary>
-        <pre id="currSSPre">Waiting for message...</pre>
+        <pre id="currStatusPre">Waiting for message...</pre>
     </details>
 
     <details open>
@@ -75,7 +75,7 @@
 
     <details>
         <summary>System Status Messages <button id="clearStatusBtn">Clear</button></summary>
-        <pre id="ssPre">Waiting for messages...</pre>
+        <pre id="statusPre">Waiting for messages...</pre>
     </details>
 
     <script>
@@ -83,11 +83,11 @@
         const REMOTE_URL = 'wss://braudeproject2025server.onrender.com/';
         const LOCAL_URL = 'ws://localhost:5000/';
 
-        const statusPre = document.getElementById('statusPre');
+        const connStatusPre = document.getElementById('connStatusPre');
         const logPre = document.getElementById('LogPre');
         const mqttPre = document.getElementById('mqttPre');
-        const ssPre = document.getElementById('ssPre');
-        const currSSPre = document.getElementById('currSSPre');
+        const statusPre = document.getElementById('statusPre');
+        const currStatusPre = document.getElementById('currStatusPre');
 
         const toggleBtn = document.getElementById('toggleBtn');
         const connectBtn = document.getElementById('connectBtn');
@@ -120,17 +120,22 @@
         connectWebSocket = (url) => {
 
             if (ws) ws.close(1000, "Manual disconnect");
-            statusPre.textContent = 'Connecting to ' + url + ' ...';
+            connStatusPre.textContent = 'Connecting to ' + url + ' ...';
 
             ws = new WebSocket(url);
             ws.onopen = () => {
 
                 console.log('Connection opened (' + ws.url + ')');
-                statusPre.textContent = 'Connected to ' + url;
+                connStatusPre.textContent = 'Connected to ' + url;
                 ws.send("system_reset");
                 ws.send("system_status");
                 ws.send("log");
                 ws.send("mqtt");
+
+                currStatusPre.textContent = 'Waiting for messages...';
+                clearLogBtn.click();
+                clearMqttBtn.click();
+                clearStatusBtn.click();
             };
             ws.onmessage = (event) => {
 
@@ -138,9 +143,9 @@
                 let data = event.data;
                 try { data = JSON.parse(data); } catch {}
                 if (data.topic === 'system_status'){
-                    currSSPre.textContent = JSON.stringify(data.message, null, 2);
+                    currStatusPre.textContent = JSON.stringify(data.message, null, 2);
                     statusQueue.enqueue(data.message)
-                    prependMessage(ssPre, statusQueue);
+                    prependMessage(statusPre, statusQueue);
                 }
                 else if (data.topic === 'mqtt'){
                     mqttQueue.enqueue(data.message)
@@ -151,15 +156,10 @@
                     prependMessage(logPre, logQueue);
                 }
             };
-            // ws.onclose = () => {
-
-            //     console.log('Connection closed (' + ws.url + ')');
-            //     // statusPre.textContent = 'Connection closed (' + url + ')';
-            // };
             ws.onerror = (err) => {
 
                 console.error('WebSocket error:', err);
-                statusPre.textContent = 'Connection error to ' + currentUrl;
+                connStatusPre.textContent = 'Connection error to ' + currentUrl;
             };
         }
         prependMessage = (pre, queue) => {
