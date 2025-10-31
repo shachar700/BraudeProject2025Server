@@ -30,30 +30,22 @@ const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-resetSystemStatus = () => {
-    setTimeout(async () =>{
-        if (regressionTestInProgress) {
-            clearTimeout(regressionTestInProgress);
-            regressionTestInProgress = null;
-            console.log("Regression test stopped");
-            await sleep(1000);
-        }
-        systemStatusManager.reset();
-        console.log("SystemStatus reset successfully");
-    }, 0);
+resetSystemStatus = (currentTimeout = null) => {
+    if (currentTimeout || regressionTestInProgress) {
+        clearTimeout(regressionTestInProgress);
+        regressionTestInProgress = null;
+        console.log("Regression test stopped");
+    }
+    systemStatusManager.reset();
+    console.log("SystemStatus reset successfully");
+    publish(PublisherTopics.SYSTEM_RESET, {message: "SystemStatus reset successfully", timestamp: new Date()});
 }
 
 regressionTest = () => {
     const currentTimeout = setTimeout(async ()=>{
         console.log("Regression test started");
-        if (regressionTestInProgress && regressionTestInProgress !== currentTimeout) {
-            clearTimeout(regressionTestInProgress);
-            regressionTestInProgress = null;
-            console.log("Previous regression test stopped");
-            await sleep(1000);
-        }
-        systemStatusManager.reset();
-        regressionTestInProgress = currentTimeout;
+
+        resetSystemStatus(currentTimeout);
         await sleep(1000);
         if (regressionTestInProgress === null) return;
 

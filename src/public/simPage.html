@@ -14,29 +14,6 @@
         label {font-weight: bold; }
         option { font-size: 16px; }
     </style>
-    <script>
-        class Queue {
-            constructor(limit = 10) {
-                this.limit = limit;
-                this.items = [];
-            }
-
-            enqueue(item) {
-                // Add to queue
-                this.items.push(item);
-
-                // Keep only the last 'limit' items
-                if (this.items.length > this.limit) {
-                    this.items.shift(); // remove oldest
-                }
-            }
-
-            getReversed() {
-                // Return newest → oldest
-                return [...this.items].reverse();
-            }
-        }
-    </script>
 </head>
 <body>
 <h1>Braude Project 2025 - PLARA Simulator</h1>

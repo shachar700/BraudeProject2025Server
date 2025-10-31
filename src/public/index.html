@@ -23,17 +23,16 @@
 
             enqueue(item) {
                 // Add to queue
-                this.items.push(item);
+                this.items.unshift(item);
 
                 // Keep only the last 'limit' items
                 if (this.items.length > this.limit) {
-                    this.items.shift(); // remove oldest
+                    this.items.pop(); // remove oldest
                 }
             }
 
-            getReversed() {
-                // Return newest → oldest
-                return [...this.items].reverse();
+            getItems() {
+                return [...this.items];
             }
         }
     </script>
@@ -57,7 +56,12 @@
 
     <details open>
         <summary>Current System Status</summary>
-        <pre id="currSSMessages">Waiting for message...</pre>
+        <pre id="currSSPre">Waiting for message...</pre>
+    </details>
+
+    <details open>
+        <summary>Log Messages</summary>
+        <pre id="LogPre">Waiting for messages...</pre>
     </details>
 
     <details>
@@ -67,7 +71,7 @@
 
     <details>
         <summary>System Status Messages</summary>
-        <pre id="ssMessages">Waiting for messages...</pre>
+        <pre id="ssPre">Waiting for messages...</pre>
     </details>
 
     <script>
@@ -75,9 +79,10 @@
         const REMOTE_URL = 'wss://braudeproject2025server.onrender.com/';
         const LOCAL_URL = 'ws://localhost:5000/';
         const statusPre = document.getElementById('statusPre');
+        const logPre = document.getElementById('LogPre');
         const mqttPre = document.getElementById('mqttPre');
-        const ssPre = document.getElementById('ssMessages');
-        const currSSPre = document.getElementById('currSSMessages');
+        const ssPre = document.getElementById('ssPre');
+        const currSSPre = document.getElementById('currSSPre');
         const toggleBtn = document.getElementById('toggleBtn');
         const connectBtn = document.getElementById('connectBtn');
         const openSimBtn = document.getElementById('openSimBtn');
@@ -86,6 +91,7 @@
         const maxDisplayedMessages = 300;
         const mqttQueue = new Queue(maxDisplayedMessages);
         const ssQueue = new Queue(maxDisplayedMessages);
+        const logQueue = new Queue(maxDisplayedMessages);
 
         let currentUrl = REMOTE_URL;
         let ws;
@@ -99,6 +105,7 @@
             ws.onopen = () => {
                 console.log('Connection opened (' + ws.url + ')');
                 statusPre.textContent = 'Connected to ' + url;
+                ws.send("system_reset");
                 ws.send("system_status");
                 ws.send("log");
                 ws.send("mqtt");
@@ -117,6 +124,10 @@
                     mqttQueue.enqueue(data.message)
                     prependMessage(mqttPre, mqttQueue);
                 }
+                else{
+                    logQueue.enqueue(data.message)
+                    prependMessage(logPre, logQueue);
+                }
             };
 
             // ws.onclose = () => {
@@ -131,7 +142,7 @@
         }
 
         function prependMessage(pre, queue) {
-            const items = queue.getReversed();
+            const items = queue.getItems();
             const text = items.map(tmp => JSON.stringify(tmp, null, 2)).join('\n---------------------------------------\n');
             if (pre.textContent === 'Waiting for messages...') pre.textContent = '';
             pre.textContent = text;
