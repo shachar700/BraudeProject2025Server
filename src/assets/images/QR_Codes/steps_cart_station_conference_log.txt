@@ -1,0 +1,18 @@
+//entered station 1
+Station 1: Cart 1
+// left station 1
+Station 1: Empty
+
+// cart 1 entered station 1
+Station 2: Cart 1
+
+// cart 2 entered station 1
+Station 1: Cart 2
+// cart 2 left station 1
+Station 1: Empty
+
+Station 2: Empty
+// cart 2 entered station 2 and causes cart 1 to exit station 2 in app towards station 3
+Station 2: Cart 2
+
+Station 2: Empty
