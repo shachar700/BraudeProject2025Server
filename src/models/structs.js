@@ -69,7 +69,8 @@ class QuizResult{
 
 class AnswerResult{
 
-    constructor(selectedAnswer, correctAnswer, durationSec) {
+    constructor(question_id, quizResult_id, selectedAnswer, correctAnswer, durationSec) {
+        this.question_id = question_id;
         this.quizResult_id = quizResult_id;
         this.selectedAnswer = selectedAnswer;
         this.correctAnswer = correctAnswer;
