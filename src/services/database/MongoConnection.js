@@ -61,4 +61,4 @@ class DB_Service {
   }
 }
 
-export default DB_Service;
+module.exports = DB_Service;
