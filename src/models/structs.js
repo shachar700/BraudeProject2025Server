@@ -40,4 +40,22 @@ class StationOccupancy{
     }
 }
 
+class Badge{
+
+    constructor(badge_id, title, description){
+        this.badge_id = badge_id;
+        this.title = title;
+        this.description = description;
+    }
+}
+
+
+class UserBadge{
+    constructor(username, badge_id, unlockedDate){
+        this.username = username;
+        this.badge_id = badge_id;
+        this.unlockedDate = unlockedDate;
+    }
+}
+
 module.exports = {CartInfo, StationOccupancy}
