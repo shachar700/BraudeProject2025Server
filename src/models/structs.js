@@ -58,7 +58,23 @@ class UserBadge{
     }
 }
 
-// TODO - QuizResult { quizResult_id, username, answerResults { list<answerResult> } totalDuration { sec }, timestamp {timestamp} }
-// TODO AnswerResult { answerResult_id, quizResult_id, selectedAnswer, correctAnswer, duration}
+class QuizResult{
 
-module.exports = {CartInfo, StationOccupancy}
+    constructor(username, totalDurationSec, timestamp) {
+        this.username = username;
+        this.totalDurationSec = totalDurationSec;
+        this.timestamp = timestamp;
+    }
+}
+
+class AnswerResult{
+
+    constructor(selectedAnswer, correctAnswer, durationSec) {
+        this.quizResult_id = quizResult_id;
+        this.selectedAnswer = selectedAnswer;
+        this.correctAnswer = correctAnswer;
+        this.durationSec = durationSec;
+    }
+}
+
+module.exports = {CartInfo, StationOccupancy, Badge, UserBadge, QuizResult, AnswerResult}
