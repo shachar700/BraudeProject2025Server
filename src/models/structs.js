@@ -60,8 +60,7 @@ class UserBadge{
 
 class QuizResult{
 
-    constructor(quizResult_id, username, totalDurationSec, timestamp) {
-        this.quizResult_id = quizResult_id;
+    constructor(username, totalDurationSec, timestamp) {
         this.username = username;
         this.totalDurationSec = totalDurationSec;
         this.timestamp = timestamp;
@@ -70,8 +69,7 @@ class QuizResult{
 
 class AnswerResult{
 
-    constructor(answerResult_id, quizResult_id, selectedAnswer, correctAnswer, durationSec) {
-        this.answerResult_id = answerResult_id;
+    constructor(selectedAnswer, correctAnswer, durationSec) {
         this.quizResult_id = quizResult_id;
         this.selectedAnswer = selectedAnswer;
         this.correctAnswer = correctAnswer;
