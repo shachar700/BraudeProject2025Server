@@ -117,4 +117,29 @@ class SystemStatus {
     }
 }
 
-module.exports = {StationStatus, SystemStatus};
+// class QuizResultMessage{
+//
+//     /**
+//      *
+//      * @param {QuizResult} quizResult
+//      * @param {AnswerResult[]} answerResults
+//      */
+//     constructor(quizResult, answerResults) {
+//         this.quizResult = quizResult;
+//         this.answerResults = answerResults;
+//     }
+//
+// }
+
+class Badges{
+
+    /**
+     *
+     * @param {Badge[]} badges
+     */
+    constructor(badges) {
+        this.badges = badges;
+    }
+}
+
+module.exports = {StationStatus, SystemStatus, QuizResultMessage, Badges};
