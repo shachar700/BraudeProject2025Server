@@ -58,4 +58,7 @@ class UserBadge{
     }
 }
 
+// TODO - QuizResult { quizResult_id, username, answerResults { list<answerResult> } totalDuration { sec }, timestamp {timestamp} }
+// TODO AnswerResult { answerResult_id, quizResult_id, selectedAnswer, correctAnswer, duration}
+
 module.exports = {CartInfo, StationOccupancy}
