@@ -1,26 +1,64 @@
 // singleton mongoose connection, with uri from .env
 
-// ## check if require(...) type import is singleton - yes it is
+// ## TODO check if require(...) type import is singleton
 
 const mongoose = require('mongoose');
 
-function connectToDB() {
-  const uri = process.env.MONGODB_URI;
+class DB_Service {
+  static instance = null;
+  connection = null;
 
-  if (!uri) {
-    console.error('❌ MONGO_URI not set in .env');
-    process.exit(1);
+  constructor() {
+    if (DB_Service.instance) {
+      return DB_Service.instance;
+    }
+    DB_Service.instance = this;
   }
 
-  mongoose.connect(uri);
+  static getInstance() {
+    if (!DB_Service.instance) {
+      DB_Service.instance = new DB_Service();
+    }
+    return DB_Service.instance;
+  }
 
-  mongoose.connection.on('connected', () => {
-    console.log('✅ Connected to MongoDB');
-  });
+  async connect() {
+    if (this.connection) {
+      return this.connection;
+    }
 
-  mongoose.connection.on('error', (err) => {
-    console.error('❌ MongoDB connection error:', err);
-  });
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('❌ MONGODB_URI is not defined in environment variables.');
+    }
+
+    try {
+      await mongoose.connect(uri);
+      this.connection = mongoose.connection;
+      this.connection.once('open', () => {
+        console.log('✅ Mongoose connection established');
+      });
+      return this.connection;
+    } catch (error) {
+      console.error('❌ Error connecting to MongoDB using Mongoose:', error);
+      throw error;
+    }
+  }
+
+  getConnection() {
+    if (!this.connection) {
+      throw new Error('Mongoose connection is not established yet.');
+    }
+    return this.connection;
+  }
+
+  async close() {
+    if (this.connection) {
+      await mongoose.disconnect();
+      console.log('Mongoose connection closed');
+      this.connection = null;
+    }
+  }
 }
 
-module.exports = connectToDB;
+export default DB_Service;
