@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
     port: process.env.PORT || 5000,
     mongo: {
-        url: process.env.MONGODB_URL
+        uri: process.env.MONGODB_URI
     },
     mqtt:{
         uri: process.env.MQTT_BROKER_URI,

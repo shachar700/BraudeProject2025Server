@@ -142,4 +142,4 @@ class Badges{
     }
 }
 
-module.exports = {StationStatus, SystemStatus, QuizResultMessage, Badges};
+module.exports = {StationStatus, SystemStatus, /* QuizResultMessage */Badges};

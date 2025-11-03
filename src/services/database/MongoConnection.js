@@ -3,6 +3,7 @@
 // ## TODO check if require(...) type import is singleton
 
 const mongoose = require('mongoose');
+const config = require('../../../config');
 
 class DB_Service {
   static instance = null;
@@ -27,7 +28,7 @@ class DB_Service {
       return this.connection;
     }
 
-    const uri = process.env.MONGODB_URI;
+    const uri = config.mongo.uri;
     if (!uri) {
       throw new Error('❌ MONGODB_URI is not defined in environment variables.');
     }
