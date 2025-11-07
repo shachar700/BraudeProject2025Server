@@ -40,4 +40,15 @@ const publish = (topic, msg = "Empty message") =>{
     }
 }
 
-module.exports = {subscribe, unsubscribe, publish};
+const publicTo = (ws, topic, msg) =>{
+    let mgObj;
+    if (typeof msg === "string"){
+        msgObj = { message: msg };
+    }
+    else
+        msgObj = msg;
+    if (ws.readyState === ws.OPEN)
+        ws.send(JSON.stringify({topic: topic, message: msgObj}));
+}
+
+module.exports = {subscribe, unsubscribe, publish, publicTo};

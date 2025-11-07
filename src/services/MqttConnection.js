@@ -1,4 +1,4 @@
-// TODO singleton
+// singleton
 const config = require('../../config');
 const mqtt = require('mqtt');
 const {MqttTopics} = require("../models/enums");

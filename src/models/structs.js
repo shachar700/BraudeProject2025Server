@@ -40,4 +40,42 @@ class StationOccupancy{
     }
 }
 
-module.exports = {CartInfo, StationOccupancy}
+class Badge{
+
+    constructor(badge_id, title, description){
+        this.badge_id = badge_id;
+        this.title = title;
+        this.description = description;
+    }
+}
+
+
+class UserBadge{
+    constructor(username, badge_id, unlockedDate){
+        this.username = username;
+        this.badge_id = badge_id;
+        this.unlockedDate = unlockedDate;
+    }
+}
+
+class QuizResult{
+
+    constructor(username, totalDurationSec, timestamp) {
+        this.username = username;
+        this.totalDurationSec = totalDurationSec;
+        this.timestamp = timestamp;
+    }
+}
+
+class AnswerResult{
+
+    constructor(question_id, quizResult_id, selectedAnswer, correctAnswer, durationSec) {
+        this.question_id = question_id;
+        this.quizResult_id = quizResult_id;
+        this.selectedAnswer = selectedAnswer;
+        this.correctAnswer = correctAnswer;
+        this.durationSec = durationSec;
+    }
+}
+
+module.exports = {CartInfo, StationOccupancy, Badge, UserBadge, QuizResult, AnswerResult}

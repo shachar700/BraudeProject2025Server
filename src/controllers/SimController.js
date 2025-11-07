@@ -5,13 +5,12 @@ const {publish} = require("../services/WebSocketService");
 const {PublisherTopics, CartIDs, StationIDs} = require("../models/enums");
 const {CartInfo} = require("../models/structs");
 const {clearTimeout} = require("node:timers");
+const {logMessage} = require("../utils");
 
 let regressionTestInProgress = null;
 
-logMessage = (msg) =>{
-    console.log(`SimController :: logMessage :: message='${msg}'`);
-    if (config.publishLogMessage)
-        publish(PublisherTopics.LOG, {message:msg, timestamp: new Date()});
+logSimMessage = (msg) => {
+    logMessage(`SimController :: logSimMessage :: message='${msg}'`);
 }
 
 simulateQRMessage = (stationId, currCartId, oldCartId) => {
