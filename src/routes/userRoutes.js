@@ -7,7 +7,8 @@
 
 const express = require('express');
 const router = express.Router();
-const { getBadges, addBadge, addQuizResult } = require('../controllers/UserController'); // adjust path
+const { getBadges, addBadge, addQuizResult } = require('../controllers/UserController');
+const {logMessage} = require("../utils"); // adjust path
 
 // GET /api/getBadges?username=john_doe
 router.get('/getBadges', async (req, res) => {
@@ -39,8 +40,12 @@ router.post('/addBadge', async (req, res) => {
 
 // POST /api/addQuizResult
 router.post('/addQuizResult', async (req, res) => {
-    const { quizResult, answerResults } = req.body;
+    const body = req.body;
+    const quizResult = body["QuizResult"];
+    const answerResults = body["AnswerResults"];
     if (!quizResult || !answerResults) return res.status(400).json({ message: 'quizResult and answerResults are required' });
+
+    logMessage(` POST '/addQuizResult' :: Received QuizResult from ${quizResult.username}`)
 
     try {
         const success = await addQuizResult(quizResult, answerResults);

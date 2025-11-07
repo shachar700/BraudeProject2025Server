@@ -47,6 +47,7 @@ class SystemStatus {
         this.carts = carts;
         this.stationOccupants = stationOccupants;
         this.timestamp = timestamp;
+        this.wasUpdated = true;
     }
 
     reset(){
@@ -64,6 +65,7 @@ class SystemStatus {
     // Update timestamp (e.g., after any change)
     refreshTimestamp() {
         this.timestamp = new Date();
+        this.wasUpdated = true;
     }
 
     // Convert to plain JSON (for network or logging)
@@ -81,6 +83,7 @@ class SystemStatus {
      */
     updateStation(stationStatus) {
         this.stationOccupants.set(stationStatus.station_id, new StationOccupancy(stationStatus.old_cart_id, stationStatus.current_cart_id));
+
         this.refreshTimestamp();
     }
 
@@ -95,6 +98,8 @@ class SystemStatus {
         else{
             this.carts.push(new CartInfo(cartInfo.cart_id, cartInfo.speed));
         }
+
+        this.refreshTimestamp();
     }
 
     toString() {

@@ -29,8 +29,8 @@ const UserBadgeSchema = new Schema({
 const AnswerResultSchema = new Schema({
   question_id: { type: Number, required: true },
   quizResult_id: { type: Number, ref: 'QuizResult', required: true },
-  selectedAnswer: { type: String, required: true },
-  correctAnswer: { type: String, required: true },
+  selectedAnswer: { type: Number, required: true },
+  correctAnswer: { type: Number, required: true },
   durationSec: { type: Number, required: true },
 });
 
@@ -39,7 +39,7 @@ const QuizResultSchema = new Schema({
   quizResult_id: { type: Number, unique: true },
   username: { type: String, required: true },
   totalDurationSec: { type: Number, required: true },
-  timestamp: { type: Date, default: Date.now },
+  timestamp: { type: Date, default: new Date() },
 });
 
 // Models
