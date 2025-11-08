@@ -49,7 +49,7 @@ const initBadges = async () => {
         ]);
         return 'Badges inserted into the database.';
     } else {
-        return 'Badges were already in the database.';
+        return 'Badges are already in the database.';
     }
 }
 
