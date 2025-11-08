@@ -15,15 +15,7 @@ const mongoose = require('mongoose');
  */
 async function getUserBadges(username) {
     try {
-        const userBadges = await UserBadge.find({ username }).select('-_id -__v');
-
-        // Get full badge info manually
-        const badges = await Promise.all(userBadges.map(async ub => {
-            const badge = await Badge.findOne({ badge_id: ub.badge_id });
-            return { ...ub.toObject(), badge };
-        }));
-
-        return badges;
+        return await UserBadge.find({username}).select('-_id -__v');
     } catch (err) {
         console.error('Error fetching user badges:', err);
         return [];

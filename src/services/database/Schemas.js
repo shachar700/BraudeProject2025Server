@@ -22,7 +22,7 @@ const BadgeSchema = new Schema({
 const UserBadgeSchema = new Schema({
     username: { type: String, required: true },
     badge_id: { type: Number, ref: 'Badge', required: true },
-    unlockedDate: { type: Date, default: Date.now },
+    dateEarned: { type: Date, default: Date.now },
 });
 
 // AnswerResult schema
