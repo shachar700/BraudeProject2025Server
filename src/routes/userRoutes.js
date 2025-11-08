@@ -7,16 +7,16 @@
 
 const express = require('express');
 const router = express.Router();
-const { getBadges, addBadge, addQuizResult } = require('../controllers/UserController');
+const { getUserBadges, addBadge, addQuizResult } = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
-// GET /api/getBadges?username=john_doe
-router.get('/getBadges', async (req, res) => {
+// GET /api/getUserBadges?username=bob
+router.get('/getUserBadges', async (req, res) => {
     const username = req.query.username;
     if (!username) return res.status(400).json({ message: 'username is required' });
 
     try {
-        const badges = await getBadges(username);
+        const badges = await getUserBadges(username);
         res.status(200).json(badges);
     } catch (err) {
         console.error(err);

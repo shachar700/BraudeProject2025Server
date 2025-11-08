@@ -34,6 +34,11 @@ app.use('/sim', simRoutes)
 const userRoutes = require("./routes/userRoutes");
 app.use('/user', userRoutes);
 
+const dataRoutes = require("./routes/dataRoutes");
+app.use('/data', dataRoutes);
+
+const devRoutes = require("./routes/devRoutes");
+app.use('/dev', devRoutes);
 
 app.use(express.static(path.join(__dirname, './public')));
 

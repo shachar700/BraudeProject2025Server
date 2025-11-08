@@ -51,10 +51,10 @@ class Badge{
 
 
 class UserBadge{
-    constructor(username, badge_id, unlockedDate){
+    constructor(username, badge_id, dateEarned){
         this.username = username;
         this.badge_id = badge_id;
-        this.unlockedDate = unlockedDate;
+        this.dateEarned = dateEarned;
     }
 }
 

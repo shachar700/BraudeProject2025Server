@@ -1,9 +1,4 @@
 
-// TODO - getBadges(username) returns List<UserBadge>
-
-// TODO - addBadge(username, badge_id) returns boolean
-
-// TODO addQuizResult(QuizResult, AnswerResult[]) returns boolean
 /**
  * first insert the quizResult to the db, and get it's new id
  * afterward set the quizResult_id to that id in each of the answerResult in the given array
@@ -18,17 +13,9 @@ const mongoose = require('mongoose');
  * @param {string} username
  * @returns {Promise<UserBadge[]>}
  */
-async function getBadges(username) {
+async function getUserBadges(username) {
     try {
-        const userBadges = await UserBadge.find({ username });
-
-        // Get full badge info manually
-        const badges = await Promise.all(userBadges.map(async ub => {
-            const badge = await Badge.findOne({ badge_id: ub.badge_id });
-            return { ...ub.toObject(), badge };
-        }));
-
-        return badges;
+        return await UserBadge.find({username}).select('-_id -__v');
     } catch (err) {
         console.error('Error fetching user badges:', err);
         return [];
@@ -48,7 +35,7 @@ async function addBadge(username, badge_id) {
         const existingBadge = await Badge.findOne({ badge_id }).session(session);
         if (!existingBadge) {
             await session.abortTransaction();
-            session.endSession();
+            await session.endSession();
             console.error(`Badge with ID ${badge_id} does not exist`);
             return false;
         }
@@ -57,7 +44,7 @@ async function addBadge(username, badge_id) {
         const userHasBadge = await UserBadge.findOne({ username, badge_id }).session(session);
         if (userHasBadge) {
             await session.commitTransaction();
-            session.endSession();
+            await session.endSession();
             return false;
         }
 
@@ -66,11 +53,11 @@ async function addBadge(username, badge_id) {
         await userBadge.save({ session });
 
         await session.commitTransaction();
-        session.endSession();
+        await session.endSession();
         return true;
     } catch (err) {
         await session.abortTransaction();
-        session.endSession();
+        await session.endSession();
         console.error('Error adding badge to user:', err);
         return false;
     }
@@ -112,14 +99,16 @@ async function addQuizResult(quizResult, answerResults) {
         await AnswerResult.insertMany(answerResultDocuments, { session });
 
         await session.commitTransaction();
-        session.endSession();
+        await session.endSession();
         return true;
     } catch (err) {
         await session.abortTransaction();
-        session.endSession();
+        await session.endSession();
         console.error('Error adding quiz result and answers:', err);
         return false;
     }
 }
 
-module.exports = { getBadges, addBadge, addQuizResult };
+// TODO - GET /getUserQuizzes :: params: username
+
+module.exports = { getUserBadges, addBadge, addQuizResult };

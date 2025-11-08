@@ -35,6 +35,8 @@
     <summary>Actions</summary>
     <button id="resetBtn">Reset System Status</button>
     <button id="regressionBtn">Regression Test</button>
+    <br>
+    <button onclick="initBadges()">Init Badges</button>
     <!-- TODO <button id="getBadgesBtn">Get Badges</button> -->
 </details>
 
@@ -224,6 +226,23 @@
             .catch(error => resultDiv.textContent = `Error: ${error}`);
     });
 
+    const initBadges = () =>{
+        fetch(`${currentUrl}/dev/initBadges`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
+    }
 </script>
 </body>
 </html>
