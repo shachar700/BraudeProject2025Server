@@ -7,42 +7,47 @@ const initBadges = async () => {
     if (existingCount === 0) {
         await Badge.insertMany([
             {
-                badge_id: 100,
-                title: "Getting Started",
-                description: "Played for 5 minutes."
-            },
-            {
                 badge_id: 101,
-                title: "Settling In",
-                description: "Played for 10 minutes."
+                title: "Getting Started",
+                description: "Play for 5 minutes."
             },
             {
                 badge_id: 102,
+                title: "Settling In",
+                description: "Play for 10 minutes."
+            },
+            {
+                badge_id: 201,
                 title: "Curious Mind",
                 description: "Read your first guide."
             },
             {
-                badge_id: 103,
+                badge_id: 202,
                 title: "Guide Explorer",
                 description: "Read 2 guides."
             },
             {
-                badge_id: 104,
+                badge_id: 203,
+                title: "Avid Reader",
+                description: "Read 3 guides."
+            },
+            {
+                badge_id: 204,
                 title: "Master Reader",
                 description: "Read all guides."
             },
             {
-                badge_id: 105,
+                badge_id: 301,
                 title: "Quiz Challenger",
-                description: "Completed a quiz."
+                description: "Complete a quiz."
             },
             {
-                badge_id: 106,
+                badge_id: 302,
                 title: "Quiz Master",
-                description: "Scored 100% on a quiz."
+                description: "Score 100% on a quiz."
             },
             {
-                badge_id: 107,
+                badge_id: 401,
                 title: "Ultimate Collector",
                 description: "Unlocked all other badges."
             }
