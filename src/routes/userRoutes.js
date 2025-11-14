@@ -56,4 +56,14 @@ router.post('/addQuizResult', async (req, res) => {
     }
 });
 
+router.get('/getProgress/:username', async (req, res) => {
+    try {
+        const progress = await getUserProgress(req.params.username);
+        res.status(200).json(progress);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error getting progress' });
+    }
+})
+
 module.exports = router;

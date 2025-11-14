@@ -5,7 +5,7 @@
  * after you've set the quizResult_id insert the AnswerResult array to the db
  */
 
-const { Badge, UserBadge, QuizResult, AnswerResult } = require('../services/database/Schemas');
+const { Badge, UserBadge, QuizResult, AnswerResult, BadgesProgress } = require('../services/database/Schemas');
 const mongoose = require('mongoose');
 
 /**
@@ -21,6 +21,24 @@ async function getUserBadges(username) {
         return [];
     }
 }
+
+const getUserProgress = async (username) => {
+    try{
+        return await BadgesProgress.findOneAndUpdate(
+            { username },
+            { $setOnInsert: { username } },
+            {
+                new: true,     // return the created or updated doc
+                upsert: true,  // create if missing
+                fields: '-_id -__v'
+            }
+        );
+    } catch (err){
+        console.error('Error fetching user progress:', err);
+        return null;
+    }
+}
+
 /**
  * Add an existing badge to a user.
  * @param {string} username
