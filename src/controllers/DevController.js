@@ -45,11 +45,6 @@ const initBadges = async () => {
                 badge_id: 302,
                 title: "Quiz Master",
                 description: "Score 100% on a quiz."
-            },
-            {
-                badge_id: 401,
-                title: "Ultimate Collector",
-                description: "Unlocked all other badges."
             }
         ]);
         return 'Badges inserted into the database.';
