@@ -20,15 +20,15 @@ router.get('/getBadges', async (req, res) => {
     }
 });
 
-const validGroupNums = [1,2,3];
-router.get('/getQuiz/:groupNum', (req, res) => {
-   const groupNum = req.params['groupNum'];
-   if (!validGroupNums.includes(parseInt(groupNum, 10))){
+const validGroupNumbers = [1,2,3];
+router.get('/getQuiz/:groupNumber', (req, res) => {
+   const groupNumber = req.params['groupNumber'];
+   if (!validGroupNumbers.includes(parseInt(groupNumber, 10))){
        return res.status(404).json({ message: 'Invalid group number' });
    }
-   res.sendFile(path.join(__dirname, `../assets/files/QuizGroup${groupNum}.json`), (err)=>{
+   res.sendFile(path.join(__dirname, `../assets/files/QuizGroup${groupNumber}.json`), (err)=>{
        if (err){
-           return res.status(404).json({ message: `Quiz not found for group ${groupNum}` });
+           return res.status(404).json({ message: `Quiz not found for group ${groupNumber}` });
        }
    });
 });
