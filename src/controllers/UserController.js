@@ -136,7 +136,7 @@ async function addQuizResult(quizResult, answerResults) {
     }
 }
 
-const updateUserProgress = async (username, playDurationMs, completedQuiz, guideRead) => {
+const updateUserProgress = async (username, playDurationMs, completedQuiz, guidesRead) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -151,13 +151,13 @@ const updateUserProgress = async (username, playDurationMs, completedQuiz, guide
             }, {session}
         );
 
-        guideRead.map(guideId =>
-            GuideRead.updateOne(
-                { GR_id: `${username}_${guideId}` },
-                { $set: { GR_id: `${username}_${guideId}`, username, guideId } },
+        for (const ind in guidesRead) {
+            await GuideRead.findOneAndUpdate(
+                { GR_id: `${username}_${guidesRead[ind]}` },
+                { $setOnInsert: { GR_id: `${username}_${guidesRead[ind]}`, username, guideId: guidesRead[ind] } },
                 { upsert: true, session }
             )
-        )
+        }
 
         await session.commitTransaction();
         await session.endSession();

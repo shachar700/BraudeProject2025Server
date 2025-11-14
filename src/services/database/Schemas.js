@@ -51,7 +51,7 @@ const UserProgressSchema = new Schema({
 });
 
 const GuideReadSchema = new Schema({
-    GR_id: {type: String, required: true,unique: true},
+    GR_id: {type: String, required: true, unique: true},
     username: { type: String, required: true },
     guideId: { type: Number, required: true },
 })
@@ -61,7 +61,7 @@ const Badge = model("Badge", BadgeSchema);
 const UserBadge = model("UserBadge", UserBadgeSchema);
 const QuizResult = model("QuizResult", QuizResultSchema);
 const AnswerResult = model("AnswerResult", AnswerResultSchema);
-const UserProgress = model("BadgesProgress", UserProgressSchema);
+const UserProgress = model("UserProgress", UserProgressSchema);
 const GuideRead = model("GuideRead", GuideReadSchema);
 
 module.exports = { Badge, UserBadge, QuizResult, AnswerResult, UserProgress, GuideRead };
