@@ -27,7 +27,7 @@ router.get('/getUserBadges', async (req, res) => {
 // POST /api/addBadge
 router.post('/addBadge', async (req, res) => {
     const { username, badge_id } = req.body;
-    if (!username || badge_id == null) return res.status(400).json({ message: 'username and badge_id are required' });
+    if (!username || !badge_id) return res.status(400).json({ message: 'username and badge_id are required' });
 
     try {
         const success = await addBadge(username, badge_id);
