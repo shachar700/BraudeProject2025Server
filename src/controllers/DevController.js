@@ -54,7 +54,15 @@ const initBadges = async () => {
 }
 
 // TODO - resetAllUserBadges() :: clear the UserBadge table
-
+const resetBadges = async () => {
+    try {
+        const result = await UserBadge.deleteMany({});
+        return `Reset complete. Deleted ${result.deletedCount} user badge records.`;
+    } catch (err) {
+        console.error("Error resetting user badges:", err);
+        return "Failed to reset user badges.";
+    }
+};
 // TODO - resetUserBadges(username) :: clear the UserBadge records for username
 
-module.exports = { initBadges};
+module.exports = { initBadges, resetBadges};
