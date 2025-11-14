@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { getUserBadges, addBadge, addQuizResult } = require('../controllers/UserController');
+const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress} = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
 // GET /api/getUserBadges?username=bob
@@ -59,10 +59,21 @@ router.post('/addQuizResult', async (req, res) => {
 router.get('/getProgress/:username', async (req, res) => {
     try {
         const progress = await getUserProgress(req.params.username);
-        res.status(200).json(progress);
+        return res.status(200).json(progress);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Error getting progress' });
+        return res.status(500).json({ message: 'Error getting progress' });
+    }
+})
+
+router.put('/updateProgress', async (req, res) => {
+    const {username, playDurationMs, completedQuiz, guideRead} = req.body;
+    try {
+        const updated = await updateUserProgress(username, playDurationMs, completedQuiz, guideRead);
+        return res.status(updated? 200:500).json(`Updated progress: ${updated}`);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error updating progress' });
     }
 })
 

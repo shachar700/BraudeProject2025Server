@@ -44,20 +44,26 @@ const QuizResultSchema = new Schema({
 });
 
 // QuizResult schema
-const BadgesProgressSchema = new Schema({
+const UserProgressSchema = new Schema({
     username: { type: String, required: true, unique: true },
-    playDuration: { type: Number, default: 0 },
-    guidesReady: { type: Number, default: 0 },
+    playDurationMs: { type: Number, default: 0 },
     completedQuiz: { type: Boolean, default: false },
 });
+
+const GuideReadSchema = new Schema({
+    GR_id: {type: String, required: true,unique: true},
+    username: { type: String, required: true },
+    guideId: { type: Number, required: true },
+})
 
 // Models
 const Badge = model("Badge", BadgeSchema);
 const UserBadge = model("UserBadge", UserBadgeSchema);
 const QuizResult = model("QuizResult", QuizResultSchema);
 const AnswerResult = model("AnswerResult", AnswerResultSchema);
-const BadgesProgress = model("BadgesProgress", BadgesProgressSchema);
+const UserProgress = model("BadgesProgress", UserProgressSchema);
+const GuideRead = model("GuideRead", GuideReadSchema);
 
-module.exports = { Badge, UserBadge, QuizResult, AnswerResult, BadgesProgress };
+module.exports = { Badge, UserBadge, QuizResult, AnswerResult, UserProgress, GuideRead };
 
 

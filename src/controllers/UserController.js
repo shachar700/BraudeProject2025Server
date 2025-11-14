@@ -5,7 +5,7 @@
  * after you've set the quizResult_id insert the AnswerResult array to the db
  */
 
-const { Badge, UserBadge, QuizResult, AnswerResult, BadgesProgress } = require('../services/database/Schemas');
+const { Badge, UserBadge, QuizResult, AnswerResult, UserProgress, GuideRead } = require('../services/database/Schemas');
 const mongoose = require('mongoose');
 
 /**
@@ -24,15 +24,24 @@ async function getUserBadges(username) {
 
 const getUserProgress = async (username) => {
     try{
-        return await BadgesProgress.findOneAndUpdate(
+        const progressDoc = await UserProgress.findOneAndUpdate(
             { username },
             { $setOnInsert: { username } },
             {
-                new: true,     // return the created or updated doc
-                upsert: true,  // create if missing
-                fields: '-_id -__v'
+                new: true,
+                upsert: true,
+                projection: { _id: 0, __v: 0 },
+                lean: true
             }
         );
+
+        const guidesReadRecords = await GuideRead.find({username: username}, {guideId: 1, _id: 0}).lean();
+        const guidesRead = guidesReadRecords.map(record => record.guideId);
+
+        return {
+            ...progressDoc,
+            guidesRead
+        };
     } catch (err){
         console.error('Error fetching user progress:', err);
         return null;
@@ -127,6 +136,40 @@ async function addQuizResult(quizResult, answerResults) {
     }
 }
 
+const updateUserProgress = async (username, playDurationMs, completedQuiz, guideRead) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+
+        await UserProgress.findOneAndUpdate(
+            { username },
+            {
+                $set: {
+                    playDurationMs: playDurationMs,
+                    completedQuiz: completedQuiz
+                }
+            }, {session}
+        );
+
+        guideRead.map(guideId =>
+            GuideRead.updateOne(
+                { GR_id: `${username}_${guideId}` },
+                { $set: { GR_id: `${username}_${guideId}`, username, guideId } },
+                { upsert: true, session }
+            )
+        )
+
+        await session.commitTransaction();
+        await session.endSession();
+        return true;
+    } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        console.error('Error updating progress:', err);
+        return false;
+    }
+}
+
 // TODO - GET /getUserQuizzes :: params: username
 
-module.exports = { getUserBadges, addBadge, addQuizResult };
+module.exports = { getUserBadges, addBadge, addQuizResult, getUserProgress, updateUserProgress};
