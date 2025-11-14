@@ -46,7 +46,7 @@ const QuizResultSchema = new Schema({
 // QuizResult schema
 const UserProgressSchema = new Schema({
     username: { type: String, required: true, unique: true },
-    playDurationMs: { type: Number, default: 0 },
+    playDurationMin: { type: Number, default: 0 },
     completedQuiz: { type: Boolean, default: false },
 });
 

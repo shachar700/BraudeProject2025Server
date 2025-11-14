@@ -136,7 +136,7 @@ async function addQuizResult(quizResult, answerResults) {
     }
 }
 
-const updateUserProgress = async (username, playDurationMs, completedQuiz, guidesRead) => {
+const updateUserProgress = async (username, playDurationMin, completedQuiz, guidesRead) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -145,7 +145,7 @@ const updateUserProgress = async (username, playDurationMs, completedQuiz, guide
             { username },
             {
                 $set: {
-                    playDurationMs: playDurationMs,
+                    playDurationMin: playDurationMin,
                     completedQuiz: completedQuiz
                 }
             }, {session}
