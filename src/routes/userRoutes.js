@@ -1,10 +1,10 @@
 
 const express = require('express');
 const router = express.Router();
-const { getUserBadges, addBadge, addQuizResult } = require('../controllers/UserController');
+const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress} = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
-// GET /getBadges , params: username {string} 
+// GET /getBadges , params: username {string}
 // GET /api/getUserBadges/bob
 router.get('/getUserBadges/:username', async (req, res) => {
     const { username } = req.params;
@@ -23,10 +23,9 @@ router.get('/getUserBadges/:username', async (req, res) => {
 });
 
 // POST /addBadge , params: username {string} and badge_id {number}
-// POST /api/addBadge
 router.post('/addBadge', async (req, res) => {
     const { username, badge_id } = req.body;
-    if (!username || badge_id == null) return res.status(400).json({ message: 'username and badge_id are required' });
+    if (!username || !badge_id) return res.status(400).json({ message: 'username and badge_id are required' });
 
     try {
         const success = await addBadge(username, badge_id);
@@ -38,7 +37,6 @@ router.post('/addBadge', async (req, res) => {
 });
 
 // POST /addQuizResult , params: QuizResult, List<AnswerResult>
-// POST /api/addQuizResult
 router.post('/addQuizResult', async (req, res) => {
     const body = req.body;
     const quizResult = body["QuizResult"];
@@ -72,5 +70,27 @@ router.get('/getUserQuizzes/:username', async (req, res) => {
         res.status(500).json({ message: 'Error fetching quiz results' });
     }
 });
+
+router.get('/getProgress/:username', async (req, res) => {
+    try {
+        const progress = await getUserProgress(req.params.username);
+        return res.status(200).json(progress);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error getting progress' });
+    }
+})
+
+router.put('/updateProgress', async (req, res) => {
+    const {username, playDurationMin, completedQuiz, guidesRead} = req.body;
+    // console.log(req.body)
+    try {
+        const updated = await updateUserProgress(username, playDurationMin, completedQuiz, guidesRead);
+        return res.status(updated? 200:500).json(`Updated progress: ${updated}`);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error updating progress' });
+    }
+})
 
 module.exports = router;

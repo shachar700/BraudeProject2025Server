@@ -5,7 +5,7 @@
  * after you've set the quizResult_id insert the AnswerResult array to the db
  */
 
-const { Badge, UserBadge, QuizResult, AnswerResult } = require('../services/database/Schemas');
+const { Badge, UserBadge, QuizResult, AnswerResult, UserProgress, GuideRead } = require('../services/database/Schemas');
 const mongoose = require('mongoose');
 
 /**
@@ -21,6 +21,33 @@ async function getUserBadges(username) {
         return [];
     }
 }
+
+const getUserProgress = async (username) => {
+    try{
+        const progressDoc = await UserProgress.findOneAndUpdate(
+            { username },
+            { $setOnInsert: { username } },
+            {
+                new: true,
+                upsert: true,
+                projection: { _id: 0, __v: 0 },
+                lean: true
+            }
+        );
+
+        const guidesReadRecords = await GuideRead.find({username: username}, {guideId: 1, _id: 0}).lean();
+        const guidesRead = guidesReadRecords.map(record => record.guideId);
+
+        return {
+            ...progressDoc,
+            guidesRead
+        };
+    } catch (err){
+        console.error('Error fetching user progress:', err);
+        return null;
+    }
+}
+
 /**
  * Add an existing badge to a user.
  * @param {string} username
@@ -109,6 +136,40 @@ async function addQuizResult(quizResult, answerResults) {
     }
 }
 
+const updateUserProgress = async (username, playDurationMin, completedQuiz, guidesRead) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+
+        await UserProgress.findOneAndUpdate(
+            { username },
+            {
+                $set: {
+                    playDurationMin: playDurationMin,
+                    completedQuiz: completedQuiz
+                }
+            }, {session}
+        );
+
+        for (const ind in guidesRead) {
+            await GuideRead.findOneAndUpdate(
+                { GR_id: `${username}_${guidesRead[ind]}` },
+                { $setOnInsert: { GR_id: `${username}_${guidesRead[ind]}`, username, guideId: guidesRead[ind] } },
+                { upsert: true, session }
+            )
+        }
+
+        await session.commitTransaction();
+        await session.endSession();
+        return true;
+    } catch (err) {
+        await session.abortTransaction();
+        await session.endSession();
+        console.error('Error updating progress:', err);
+        return false;
+    }
+}
+
 // GET /getUserQuizzes :: params: username
 /**
  * Get all quiz results (with answers) for a specific user.
@@ -148,4 +209,4 @@ async function getUserQuizzes(username) {
     }
 }
 
-module.exports = { getUserBadges, addBadge, addQuizResult, getUserQuizzes };
+module.exports = { getUserBadges, addBadge, addQuizResult, getUserQuizzes, getUserProgress, updateUserProgress };
