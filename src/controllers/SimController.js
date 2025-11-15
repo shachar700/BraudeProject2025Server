@@ -37,7 +37,7 @@ resetSystemStatus = (currentTimeout = null) => {
     }
     systemStatusManager.reset();
     logMessage("SystemStatus reset successfully");
-    publish(PublisherTopics.SYSTEM_RESET, {message: "SystemStatus reset successfully", timestamp: new Date()});
+    publish(PublisherTopics.SYSTEM_RESET, {message: "SystemStatus reset successfully", timestamp: new Date().toLocaleString()});
 }
 
 regressionTest = () => {

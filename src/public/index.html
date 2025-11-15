@@ -143,8 +143,13 @@
                 let data = event.data;
                 try { data = JSON.parse(data); } catch {}
                 if (data.topic === 'system_status'){
-                    currStatusPre.textContent = JSON.stringify(data.message, null, 2);
-                    statusQueue.enqueue(data.message)
+                    const formattedMessage = { ...data.message };
+                    if (formattedMessage.timestamp) {
+                        formattedMessage.timestamp = new Date(formattedMessage.timestamp)
+                            .toLocaleString('en-US', { weekday:'long', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+                    }
+                    currStatusPre.textContent = JSON.stringify(formattedMessage, null, 2);
+                    statusQueue.enqueue(formattedMessage);
                     prependMessage(statusPre, statusQueue);
                 }
                 else if (data.topic === 'mqtt'){

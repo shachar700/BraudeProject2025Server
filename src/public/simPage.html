@@ -37,7 +37,9 @@
     <button id="regressionBtn">Regression Test</button>
     <br>
     <button onclick="initBadges()">Init Badges</button>
-    <!-- TODO <button id="getBadgesBtn">Get Badges</button> -->
+    <label for="usernameField">Username:</label>
+    <input id="usernameField" type="text" placeholder="Enter username" />
+    <button id="getBadgesBtn">Get Badges</button>
 </details>
 
 <details open>
@@ -243,6 +245,34 @@
                 resultDiv.textContent = `Error: ${error}`;
             });
     }
+
+    const getBadgesBtn = (username) => {
+        fetch(`${currentUrl}/user/getUserBadges/${username}`, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // backend returns JSON
+        })
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    }
+
+    // Attach click handler to button
+    document.getElementById('getBadgesBtn').addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+        getBadgesBtn(username);
+    });
 </script>
 </body>
 </html>
