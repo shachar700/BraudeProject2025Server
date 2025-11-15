@@ -1,19 +1,17 @@
 
-// TODO - GET /getBadges , params: username {string} 
-
-// TODO - POST /addBadge , params: username {string} and badge_id {number}
-
-// TODO - POST /addQuizResult , params: QuizResult, List<AnswerResult>
-
 const express = require('express');
 const router = express.Router();
 const { getUserBadges, addBadge, addQuizResult } = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
-// GET /api/getUserBadges?username=bob
-router.get('/getUserBadges', async (req, res) => {
-    const username = req.query.username;
-    if (!username) return res.status(400).json({ message: 'username is required' });
+// GET /getBadges , params: username {string} 
+// GET /api/getUserBadges/bob
+router.get('/getUserBadges/:username', async (req, res) => {
+    const { username } = req.params;
+
+    if (!username) {
+        return res.status(400).json({ message: 'username is required' });
+    }
 
     try {
         const badges = await getUserBadges(username);
@@ -24,6 +22,7 @@ router.get('/getUserBadges', async (req, res) => {
     }
 });
 
+// POST /addBadge , params: username {string} and badge_id {number}
 // POST /api/addBadge
 router.post('/addBadge', async (req, res) => {
     const { username, badge_id } = req.body;
@@ -38,6 +37,7 @@ router.post('/addBadge', async (req, res) => {
     }
 });
 
+// POST /addQuizResult , params: QuizResult, List<AnswerResult>
 // POST /api/addQuizResult
 router.post('/addQuizResult', async (req, res) => {
     const body = req.body;
@@ -53,6 +53,23 @@ router.post('/addQuizResult', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Error adding quiz result' });
+    }
+});
+
+// GET /getUserQuizzes/bob
+router.get('/getUserQuizzes/:username', async (req, res) => {
+    const { username } = req.params;
+
+    if (!username) {
+        return res.status(400).json({ message: 'Username is required' });
+    }
+
+    try {
+        const quizzes = await getUserQuizzes(username);
+        res.status(200).json(quizzes);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching quiz results' });
     }
 });
 

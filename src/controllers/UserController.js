@@ -109,6 +109,43 @@ async function addQuizResult(quizResult, answerResults) {
     }
 }
 
-// TODO - GET /getUserQuizzes :: params: username
+// GET /getUserQuizzes :: params: username
+/**
+ * Get all quiz results (with answers) for a specific user.
+ * @param {string} username
+ * @returns {Promise<Object[]>} Array of quiz results with their answers
+ */
+async function getUserQuizzes(username) {
+    try {
+        const quizzes = await QuizResult.find({ username })
+            .select('-_id -__v')
+            .lean(); // Convert Mongoose docs to plain JS objects
 
-module.exports = { getUserBadges, addBadge, addQuizResult };
+        if (!quizzes.length) return [];
+
+        const quizIds = quizzes.map(q => q.quizResult_id);
+
+        const answers = await AnswerResult.find({ quizResult_id: { $in: quizIds } })
+            .select('-_id -__v')
+            .lean();
+
+        // Group answers by quizResult_id
+        const answerMap = answers.reduce((acc, answer) => {
+            const id = answer.quizResult_id;
+            if (!acc[id]) acc[id] = [];
+            acc[id].push(answer);
+            return acc;
+        }, {});
+
+        // Attach answers to their corresponding quiz
+        return quizzes.map(q => ({
+            ...q,
+            answers: answerMap[q.quizResult_id] || []
+        }));
+    } catch (err) {
+        console.error('Error fetching user quizzes:', err);
+        return [];
+    }
+}
+
+module.exports = { getUserBadges, addBadge, addQuizResult, getUserQuizzes };

@@ -53,7 +53,7 @@ const initBadges = async () => {
     }
 }
 
-// TODO - resetAllUserBadges() :: clear the UserBadge table
+// resetAllUserBadges() :: clear the UserBadge table
 const resetBadges = async () => {
     try {
         const result = await UserBadge.deleteMany({});
@@ -63,6 +63,16 @@ const resetBadges = async () => {
         return "Failed to reset user badges.";
     }
 };
-// TODO - resetUserBadges(username) :: clear the UserBadge records for username
+// resetUserBadges(username) :: clear the UserBadge records for username
+const resetUserBadges = async (username) => {
+    try {
+        const result = await UserBadge.deleteMany({ username });
+        return `Reset complete. Deleted ${result.deletedCount} badge records for user "${username}".`;
+    } catch (err) {
+        console.error(`Error resetting badges for user ${username}:`, err);
+        return `Failed to reset badges for user "${username}".`;
+    }
+};
 
-module.exports = { initBadges, resetBadges};
+
+module.exports = { initBadges, resetBadges, resetUserBadges};
