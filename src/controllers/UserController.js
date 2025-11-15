@@ -180,7 +180,7 @@ async function getUserQuizzes(username) {
     try {
         const quizzes = await QuizResult.find({ username })
             .select('-_id -__v')
-            .lean(); // Convert Mongoose docs to plain JS objects
+            .lean();
 
         if (!quizzes.length) return [];
 
