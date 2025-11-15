@@ -1,4 +1,4 @@
-const { Badge} = require('../services/database/Schemas');
+const { Badge, UserBadge} = require('../services/database/Schemas');
 const { logMessage } = require("../utils");
 
 const initBadges = async () => {
@@ -54,7 +54,7 @@ const initBadges = async () => {
 }
 
 // resetAllUserBadges() :: clear the UserBadge table
-const resetBadges = async () => {
+const resetAllUserBadges = async () => {
     try {
         const result = await UserBadge.deleteMany({});
         return `Reset complete. Deleted ${result.deletedCount} user badge records.`;
@@ -75,4 +75,4 @@ const resetUserBadges = async (username) => {
 };
 
 
-module.exports = { initBadges, resetBadges, resetUserBadges};
+module.exports = { initBadges, resetAllUserBadges, resetUserBadges};

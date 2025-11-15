@@ -37,9 +37,17 @@
     <button id="regressionBtn">Regression Test</button>
     <br>
     <button onclick="initBadges()">Init Badges</button>
+    <button onclick="resetAllUserBadges()">Reset All User Badges</button>
     <label for="usernameField">Username:</label>
     <input id="usernameField" type="text" placeholder="Enter username" />
-    <button id="getBadgesBtn">Get Badges</button>
+    <button id="getBadgesBtn">Get User Badges</button>
+
+    <label for="badgeSelect">Select Badge:</label>
+    <select id="badgeSelect">
+        <option value="">Loading badges...</option>
+    </select>
+    <button id="addBadgeBtn">Add User Badge</button>
+    <button id="resetBadgesToUserBtn">Reset User Badges</button>
 </details>
 
 <details open>
@@ -104,8 +112,6 @@
     </form>
 
 </details>
-
-<!-- TODO addBadge to user form -->
 
 <script>
     // Connect to your WebSocket server
@@ -246,6 +252,24 @@
             });
     }
 
+    const resetAllUserBadges = () =>{
+        fetch(`${currentUrl}/dev/resetAllUserBadges`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
+    }
+
     const getBadgesBtn = (username) => {
         fetch(`${currentUrl}/user/getUserBadges/${username}`, {
             method: 'GET'
@@ -264,7 +288,6 @@
         });
     }
 
-    // Attach click handler to button
     document.getElementById('getBadgesBtn').addEventListener('click', () => {
         const username = document.getElementById('usernameField').value.trim();
         if (!username) {
@@ -272,6 +295,86 @@
             return;
         }
         getBadgesBtn(username);
+    });
+
+    // load badges
+
+    const badgeSelect = document.getElementById('badgeSelect');
+    const addBadgeBtn = document.getElementById('addBadgeBtn');
+
+    // Fetch badges from server and populate dropdown
+    const loadBadges = () => {
+        fetch(`${currentUrl}/data/getBadges`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
+            .then(badges => {
+                badgeSelect.innerHTML = ''; // clear previous options
+                badges.forEach(badge => {
+                    const option = document.createElement('option');
+                    option.value = badge.badge_id;
+                    option.textContent = `ID: ${badge.badge_id} | ${badge.title} (${badge.description})`;
+                    badgeSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                badgeSelect.innerHTML = '<option value="">Error loading badges</option>';
+                console.error(err);
+            });
+    };
+
+    loadBadges();
+
+    addBadgeBtn.addEventListener('click', () => {
+    const username = document.getElementById('usernameField').value.trim();
+    const badge_id = badgeSelect.value;
+
+    if (!username) {
+        resultDiv.textContent = 'Please enter a username.';
+        return;
+    }
+    if (!badge_id) {
+        resultDiv.textContent = 'Please select a badge.';
+        return;
+    }
+
+    // add badge to user
+    fetch(`${currentUrl}/user/addBadge`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, badge_id: parseInt(badge_id) })
+        })
+        .then(res => res.json())
+        .then(data => {
+            resultDiv.textContent = data.message;
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
+    });
+
+    // reset badges to user
+    const resetBadgesToUserBtn = document.getElementById('resetBadgesToUserBtn');
+
+    resetBadgesToUserBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/dev/resetUserBadges/${username}`, {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(data => {
+            resultDiv.textContent = data;
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
     });
 </script>
 </body>

@@ -1,4 +1,4 @@
-const { initBadges, resetBadges } = require('../controllers/DevController');
+const { initBadges, resetAllUserBadges, resetUserBadges } = require('../controllers/DevController');
 
 const express = require('express');
 const router = express.Router();
@@ -9,9 +9,9 @@ router.post('/initBadges', async (req, res) => {
     res.status(200).send(msg);
 })
 
-// POST /resetBadges
-router.post('/resetBadges', async (req, res) => {
-    const msg = await resetBadges();
+// POST /resetAllUserBadges
+router.post('/resetAllUserBadges', async (req, res) => {
+    const msg = await resetAllUserBadges();
     res.status(200).send(msg);
 })
 
