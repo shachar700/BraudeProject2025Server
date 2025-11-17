@@ -1,4 +1,4 @@
-const { Badge, UserBadge} = require('../services/database/Schemas');
+const { Badge, UserBadge, UserProgress, GuideRead} = require('../services/database/Schemas');
 const { logMessage } = require("../utils");
 
 const initBadges = async () => {
@@ -63,6 +63,18 @@ const resetAllUserBadges = async () => {
         return "Failed to reset user badges.";
     }
 };
+
+// resetAllUserProgress() :: clear the UserProgress table
+const resetAllUserProgress = async () => {
+    try {
+        const result = await UserProgress.deleteMany({});
+        return `Reset complete. Deleted ${result.deletedCount} user progress records.`;
+    } catch (err) {
+        console.error("Error resetting user progress:", err);
+        return "Failed to reset user progress.";
+    }
+};
+
 // resetUserBadges(username) :: clear the UserBadge records for username
 const resetUserBadges = async (username) => {
     try {
@@ -74,5 +86,20 @@ const resetUserBadges = async (username) => {
     }
 };
 
+// resetUserProgress(username) :: clear the UserProgress records for username
+const resetUserProgress = async (username) => {
+    try {
+        const cleanedUsername = username.trim();
 
-module.exports = { initBadges, resetAllUserBadges, resetUserBadges};
+        const progressResult = await UserProgress.deleteMany({ username: cleanedUsername });
+        const guidesResult = await GuideRead.deleteMany({ username: cleanedUsername });
+
+        return `Reset complete. Deleted ${progressResult.deletedCount} progress records and ${guidesResult.deletedCount} guide read records for user "${cleanedUsername}".`;
+    } catch (err) {
+        console.error(`Error resetting progress for user ${username}:`, err);
+        return `Failed to reset progress for user "${username}".`;
+    }
+};
+
+
+module.exports = { initBadges, resetAllUserBadges, resetAllUserProgress, resetUserBadges, resetUserProgress};
