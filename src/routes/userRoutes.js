@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress} = require('../controllers/UserController');
+const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress, getUserQuizzes} = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
 // GET /getBadges , params: username {string}

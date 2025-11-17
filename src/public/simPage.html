@@ -22,14 +22,14 @@
 
 <div class="connection-control">
     <label for="addressField">Server URL:</label>
-    <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+    <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" readonly disabled />
     <br>
     <button id="toggleBtn">Switch to localhost</button>
     <button id="openViewerBtn">Open Viewer</button>
 </div>
 
+<label for="result">Result Log:</label>
 <pre id="result">Result will appear here...</pre>
-
 
 <details open>
     <summary>Actions</summary>
@@ -37,9 +37,15 @@
     <button id="regressionBtn">Regression Test</button>
     <br>
     <button onclick="initBadges()">Init Badges</button>
+</details>
+
+<details open>
+    <summary>User Actions</summary>
     <button onclick="resetAllUserBadges()">Reset All User Badges</button>
+    
     <label for="usernameField">Username:</label>
     <input id="usernameField" type="text" placeholder="Enter username" />
+
     <button id="getBadgesBtn">Get User Badges</button>
 
     <label for="badgeSelect">Select Badge:</label>
@@ -48,11 +54,32 @@
     </select>
     <button id="addBadgeBtn">Add User Badge</button>
     <button id="resetBadgesToUserBtn">Reset User Badges</button>
+
+    <br><br>
+    <button id="getQuizzesBtn">Get User Quizzes</button>
+    <button id="getProgressBtn">Get User Progress</button>
+
+    <br><br>
+    <div style="border: 2px solid #aaa; border-radius: 10px; padding: 15px; background-color: #f9f9f9; width: fit-content;">
+        <strong>Update Progress</strong><br><br>
+
+        <label>Play Duration (min):</label>
+        <input type="number" id="playDurationInput" value="0" style="width: 60px;" /><br>
+        <label>Completed Quiz:</label>
+        <input type="checkbox" id="completedQuizInput" /><br><br>
+
+        <label>Guides Completed:</label><br>
+        <label><input type="checkbox" name="guideIds" value="1"> Guide 1</label><br>
+        <label><input type="checkbox" name="guideIds" value="2"> Guide 2</label><br>
+        <label><input type="checkbox" name="guideIds" value="3"> Guide 3</label><br>
+        <label><input type="checkbox" name="guideIds" value="4"> Guide 4</label><br><br>
+
+        <button id="updateProgressBtn">Update Progress</button>
+    </div>
 </details>
 
-<details open>
+<!-- <details open>
     <summary>IMU Message</summary>
-
     <form id="imuForm">
         <label>
             Cart ID:
@@ -70,8 +97,7 @@
         </label>
         <button type="submit">Send</button>
     </form>
-
-</details>
+</details> -->
 
 <details open>
     <summary>QR Message</summary>
@@ -124,7 +150,7 @@
     const toggleBtn = document.getElementById('toggleBtn');
     const resetBtn = document.getElementById('resetBtn');
     const addressField = document.getElementById('addressField');
-    const imuForm = document.getElementById('imuForm');
+    //const imuForm = document.getElementById('imuForm');
     const qrForm = document.getElementById('qrForm');
 
     let currentUrl = REMOTE_URL;
@@ -185,7 +211,7 @@
             });
     });
 
-    imuForm.addEventListener('submit', (e) => {
+    /* imuForm.addEventListener('submit', (e) => {
         e.preventDefault(); // prevent page reload
         const formData = new FormData(e.target);
         const payload = {
@@ -207,7 +233,7 @@
             })
             .then(data => resultDiv.textContent = data)
             .catch(error => resultDiv.textContent = `Error: ${error}`);
-    });
+    }); */
 
     qrForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -374,6 +400,82 @@
         })
         .catch(err => {
             resultDiv.textContent = `Error: ${err}`;
+        });
+    });
+
+    // get Quizzes
+    const getQuizzesBtn = document.getElementById('getQuizzesBtn');
+    getQuizzesBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/user/getUserQuizzes/${username}`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    });
+
+    // get Progress
+    const getProgressBtn = document.getElementById('getProgressBtn');
+    getProgressBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/user/getProgress/${username}`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    });
+
+    // update Progress
+    const updateProgressBtn = document.getElementById('updateProgressBtn');
+    updateProgressBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        const playDurationMin = parseInt(document.getElementById('playDurationInput').value) || 0;
+        const completedQuiz = document.getElementById('completedQuizInput').checked;
+
+        // Collect guides read (checked checkboxes)
+        const guidesRead = Array.from(
+            document.querySelectorAll("input[name='guideIds']:checked")
+        ).map(cb => Number(cb.value));
+
+        fetch(`${currentUrl}/user/updateProgress`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, playDurationMin, completedQuiz, guidesRead })
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
         });
     });
 </script>
