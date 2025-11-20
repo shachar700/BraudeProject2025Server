@@ -1,6 +1,6 @@
 // singleton mongoose connection, with uri from .env
 
-// ## TODO check if require(...) type import is singleton
+// ## require(...) type import is singleton due to caching
 
 const mongoose = require('mongoose');
 const config = require('../../../config');

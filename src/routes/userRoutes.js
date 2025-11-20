@@ -1,19 +1,17 @@
 
-// TODO - GET /getBadges , params: username {string} 
-
-// TODO - POST /addBadge , params: username {string} and badge_id {number}
-
-// TODO - POST /addQuizResult , params: QuizResult, List<AnswerResult>
-
 const express = require('express');
 const router = express.Router();
-const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress} = require('../controllers/UserController');
+const { getUserBadges, addBadge, addQuizResult , getUserProgress, updateUserProgress, getUserQuizzes} = require('../controllers/UserController');
 const {logMessage} = require("../utils"); // adjust path
 
-// GET /api/getUserBadges?username=bob
-router.get('/getUserBadges', async (req, res) => {
-    const username = req.query.username;
-    if (!username) return res.status(400).json({ message: 'username is required' });
+// GET /getBadges , params: username {string}
+// GET /api/getUserBadges/bob
+router.get('/getUserBadges/:username', async (req, res) => {
+    const { username } = req.params;
+
+    if (!username) {
+        return res.status(400).json({ message: 'username is required' });
+    }
 
     try {
         const badges = await getUserBadges(username);
@@ -24,7 +22,7 @@ router.get('/getUserBadges', async (req, res) => {
     }
 });
 
-// POST /api/addBadge
+// POST /addBadge , params: username {string} and badge_id {number}
 router.post('/addBadge', async (req, res) => {
     const { username, badge_id } = req.body;
     if (!username || !badge_id) return res.status(400).json({ message: 'username and badge_id are required' });
@@ -38,7 +36,7 @@ router.post('/addBadge', async (req, res) => {
     }
 });
 
-// POST /api/addQuizResult
+// POST /addQuizResult , params: QuizResult, List<AnswerResult>
 router.post('/addQuizResult', async (req, res) => {
     const body = req.body;
     const quizResult = body["QuizResult"];
@@ -56,6 +54,23 @@ router.post('/addQuizResult', async (req, res) => {
     }
 });
 
+// GET /getUserQuizzes/bob
+router.get('/getUserQuizzes/:username', async (req, res) => {
+    const { username } = req.params;
+
+    if (!username) {
+        return res.status(400).json({ message: 'Username is required' });
+    }
+
+    try {
+        const quizzes = await getUserQuizzes(username);
+        res.status(200).json(quizzes);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching quiz results' });
+    }
+});
+
 router.get('/getProgress/:username', async (req, res) => {
     try {
         const progress = await getUserProgress(req.params.username);
@@ -67,10 +82,10 @@ router.get('/getProgress/:username', async (req, res) => {
 })
 
 router.put('/updateProgress', async (req, res) => {
-    const {username, playDurationMin, completedQuiz, guidesRead} = req.body;
+    const {username, playDurationMin, guidesRead} = req.body;
     // console.log(req.body)
     try {
-        const updated = await updateUserProgress(username, playDurationMin, completedQuiz, guidesRead);
+        const updated = await updateUserProgress(username, playDurationMin, guidesRead);
         return res.status(updated? 200:500).json(`Updated progress: ${updated}`);
     } catch (err) {
         console.error(err);

@@ -1,13 +1,13 @@
 
-// TODO - Badge schema based on struct Badge, PK: badge_id
+// Badge schema based on struct Badge, PK: badge_id
  
-// TODO - UserBadge schema based on struct UserBadge, PKs: username + badge_id
+// UserBadge schema based on struct UserBadge, PKs: username + badge_id
 
-// TODO - check if there is a need for User table, beside just for the username
+// check if there is a need for User table, beside just for the username - UserBadge covers it.
 
-// TODO - QuizResult based on the struct, PK: quizResult_id
+// QuizResult based on the struct, PK: quizResult_id
 
-// TODO - AnswerResult based on the struct, PKs: answerResult_id + quizResult_id
+// AnswerResult based on the struct, PKs: answerResult_id + quizResult_id
 
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
@@ -46,8 +46,7 @@ const QuizResultSchema = new Schema({
 // QuizResult schema
 const UserProgressSchema = new Schema({
     username: { type: String, required: true, unique: true },
-    playDurationMin: { type: Number, default: 0 },
-    completedQuiz: { type: Boolean, default: false },
+    playDurationMin: { type: Number, default: 0 }
 });
 
 const GuideReadSchema = new Schema({

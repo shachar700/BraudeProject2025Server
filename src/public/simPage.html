@@ -22,14 +22,14 @@
 
 <div class="connection-control">
     <label for="addressField">Server URL:</label>
-    <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" />
+    <input id="addressField" style="width: 400px" type="text" value="wss://braudeproject2025server.onrender.com/" placeholder="Enter WebSocket URL" readonly disabled />
     <br>
     <button id="toggleBtn">Switch to localhost</button>
     <button id="openViewerBtn">Open Viewer</button>
 </div>
 
+<label for="result">Result Log:</label>
 <pre id="result">Result will appear here...</pre>
-
 
 <details open>
     <summary>Actions</summary>
@@ -37,12 +37,52 @@
     <button id="regressionBtn">Regression Test</button>
     <br>
     <button onclick="initBadges()">Init Badges</button>
-    <!-- TODO <button id="getBadgesBtn">Get Badges</button> -->
+    <label for="groupNumberSelect">Select Quiz Group:</label>
+    <select id="groupNumberSelect">
+        <option value="1">Group 1</option>
+        <option value="2">Group 2</option>
+        <option value="3">Group 3</option>
+    </select>
+    <button id="getQuizBtn">Get Quiz</button>
 </details>
 
 <details open>
-    <summary>IMU Message</summary>
+    <summary>User Actions</summary>
+    <button onclick="resetAllUserBadges()">Reset All User Badges</button>
+    <button onclick="resetAllUserProgress()">Reset All User Progress</button>
+    <br>
+    <label for="usernameField">Username:</label>
+    <input id="usernameField" type="text" placeholder="Enter username" />
+    <label for="badgeSelect">Select Badge:</label>
+    <select id="badgeSelect">
+        <option value="">Loading badges...</option>
+    </select>
+    <button id="addBadgeBtn">Add User Badge</button>
+    <br>
+    <button id="getBadgesBtn">Get User Badges</button>
+    <button id="resetUserBadgesBtn">Reset User Badges</button>
+    <button id="getProgressBtn">Get User Progress</button>
+    <button id="resetUserProgressBtn">Reset User Progress</button>
+    <button id="getQuizzesBtn">Get User Quizzes</button>
+    <br>
+    <div style="border: 2px solid #aaa; border-radius: 10px; padding: 15px; background-color: #f9f9f9; width: fit-content;">
+        <strong>Update Progress</strong><br>
 
+        <label for="playDurationInput">Play Duration (min):</label>
+        <input type="number" id="playDurationInput" value="0" style="width: 60px;" /><br>
+        <label>Completed Quiz:</label>
+        <label>Guides Completed:</label><br>
+        <label><input type="checkbox" name="guideIds" value="1"> Guide 1</label><br>
+        <label><input type="checkbox" name="guideIds" value="2"> Guide 2</label><br>
+        <label><input type="checkbox" name="guideIds" value="3"> Guide 3</label><br>
+        <label><input type="checkbox" name="guideIds" value="4"> Guide 4</label><br>
+
+        <button id="updateProgressBtn">Update Progress</button>
+    </div>
+</details>
+
+<!-- <details open>
+    <summary>IMU Message</summary>
     <form id="imuForm">
         <label>
             Cart ID:
@@ -60,8 +100,7 @@
         </label>
         <button type="submit">Send</button>
     </form>
-
-</details>
+</details> -->
 
 <details open>
     <summary>QR Message</summary>
@@ -103,8 +142,6 @@
 
 </details>
 
-<!-- TODO addBadge to user form -->
-
 <script>
     // Connect to your WebSocket server
     const REMOTE_URL = 'https://braudeproject2025server.onrender.com';
@@ -116,7 +153,7 @@
     const toggleBtn = document.getElementById('toggleBtn');
     const resetBtn = document.getElementById('resetBtn');
     const addressField = document.getElementById('addressField');
-    const imuForm = document.getElementById('imuForm');
+    //const imuForm = document.getElementById('imuForm');
     const qrForm = document.getElementById('qrForm');
 
     let currentUrl = REMOTE_URL;
@@ -177,7 +214,7 @@
             });
     });
 
-    imuForm.addEventListener('submit', (e) => {
+    /* imuForm.addEventListener('submit', (e) => {
         e.preventDefault(); // prevent page reload
         const formData = new FormData(e.target);
         const payload = {
@@ -199,7 +236,7 @@
             })
             .then(data => resultDiv.textContent = data)
             .catch(error => resultDiv.textContent = `Error: ${error}`);
-    });
+    }); */
 
     qrForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -243,6 +280,269 @@
                 resultDiv.textContent = `Error: ${error}`;
             });
     }
+
+    const resetAllUserBadges = () =>{
+        fetch(`${currentUrl}/dev/resetAllUserBadges`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
+    }
+
+        const resetAllUserProgress = () =>{
+        fetch(`${currentUrl}/dev/resetAllUserProgress`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                resultDiv.textContent = data;
+            })
+            .catch(error => {
+                resultDiv.textContent = `Error: ${error}`;
+            });
+    }
+
+    const getBadgesBtn = (username) => {
+        fetch(`${currentUrl}/user/getUserBadges/${username}`, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    }
+
+    document.getElementById('getBadgesBtn').addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+        getBadgesBtn(username);
+    });
+
+    // load badges
+    const badgeSelect = document.getElementById('badgeSelect');
+    const addBadgeBtn = document.getElementById('addBadgeBtn');
+
+    const loadBadges = () => {
+        fetch(`${currentUrl}/data/getBadges`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
+            .then(badges => {
+                badgeSelect.innerHTML = '';
+                badges.forEach(badge => {
+                    const option = document.createElement('option');
+                    option.value = badge.badge_id;
+                    option.textContent = `ID: ${badge.badge_id} | ${badge.title} (${badge.description})`;
+                    badgeSelect.appendChild(option);
+                });
+            })
+            .catch(err => {
+                badgeSelect.innerHTML = '<option value="">Error loading badges</option>';
+                console.error(err);
+            });
+    };
+
+    loadBadges();
+
+    addBadgeBtn.addEventListener('click', () => {
+    const username = document.getElementById('usernameField').value.trim();
+    const badge_id = badgeSelect.value;
+
+    if (!username) {
+        resultDiv.textContent = 'Please enter a username.';
+        return;
+    }
+    if (!badge_id) {
+        resultDiv.textContent = 'Please select a badge.';
+        return;
+    }
+
+    // add badge to user
+    fetch(`${currentUrl}/user/addBadge`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, badge_id: parseInt(badge_id) })
+        })
+        .then(res => res.json())
+        .then(data => {
+            resultDiv.textContent = data.message;
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
+    });
+
+    // reset badges to user
+    const resetUserBadgesBtn = document.getElementById('resetUserBadgesBtn');
+
+    resetUserBadgesBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/dev/resetUserBadges/${username}`, {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(data => {
+            resultDiv.textContent = data;
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
+    });
+
+    // reset progress
+    const resetUserProgressBtn = document.getElementById('resetUserProgressBtn');
+
+    resetUserProgressBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/dev/resetUserProgress/${username}`, {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(data => {
+            resultDiv.textContent = data;
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
+    });
+
+    // get Quizzes
+    const getQuizzesBtn = document.getElementById('getQuizzesBtn');
+    getQuizzesBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/user/getUserQuizzes/${username}`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    });
+
+    // get Progress
+    const getProgressBtn = document.getElementById('getProgressBtn');
+    getProgressBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        fetch(`${currentUrl}/user/getProgress/${username}`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    });
+
+    // update Progress
+    const updateProgressBtn = document.getElementById('updateProgressBtn');
+    updateProgressBtn.addEventListener('click', () => {
+        const username = document.getElementById('usernameField').value.trim();
+
+        if (!username) {
+            resultDiv.textContent = "Please enter a username.";
+            return;
+        }
+
+        const playDurationMin = parseInt(document.getElementById('playDurationInput').value) || 0;
+
+        const guidesRead = Array.from(
+            document.querySelectorAll("input[name='guideIds']:checked")
+        ).map(cb => Number(cb.value));
+
+        fetch(`${currentUrl}/user/updateProgress`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, playDurationMin, guidesRead })
+        })
+        .then(response => response.json())
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            resultDiv.textContent = `Error: ${error}`;
+        });
+    });
+
+    const getQuizBtn = document.getElementById('getQuizBtn');
+    const groupNumberSelect = document.getElementById('groupNumberSelect');
+
+    getQuizBtn.addEventListener('click', () => {
+        const groupNumber = groupNumberSelect.value;
+
+        resultDiv.textContent = "Fetching quiz...";
+
+        fetch(`${currentUrl}/data/getQuiz/${groupNumber}`, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(err => {
+            resultDiv.textContent = `Error: ${err}`;
+        });
+    });
 </script>
 </body>
 </html>
