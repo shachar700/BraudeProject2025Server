@@ -82,10 +82,10 @@ router.get('/getProgress/:username', async (req, res) => {
 })
 
 router.put('/updateProgress', async (req, res) => {
-    const {username, playDurationMin, completedQuiz, guidesRead} = req.body;
+    const {username, playDurationMin, guidesRead} = req.body;
     // console.log(req.body)
     try {
-        const updated = await updateUserProgress(username, playDurationMin, completedQuiz, guidesRead);
+        const updated = await updateUserProgress(username, playDurationMin, guidesRead);
         return res.status(updated? 200:500).json(`Updated progress: ${updated}`);
     } catch (err) {
         console.error(err);
