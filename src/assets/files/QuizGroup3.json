@@ -1,10 +1,12 @@
 {
   "title": "PLARA Quiz - Group 3",
+  "title_he": "חידון PLARA - קבוצה 3",
   "groupNumber": 3,
   "questions": [
     {
       "question_id": 1,
       "title": "What is the primary purpose of the production line in Lab D106?",
+      "title_he": "מהו המטרה העיקרית של קו הייצור במעבדה D106?",
       "answers": [
         "To produce commercial goods for sale",
         "To simulate automated material handling and manufacturing processes",
@@ -12,11 +14,19 @@
         "To test robotics software for industrial use",
         "To train students on database management systems"
       ],
+      "answers_he": [
+        "לייצר סחורות מסחריות למכירה",
+        "לסמלץ טיפול בחומרים וייצור אוטומטיים",
+        "להדגים הרכבת מעגלים חשמליים",
+        "לבחון תוכנת רובוטיקה לשימוש תעשייתי",
+        "להכשיר תלמידים בניהול מסדי נתונים"
+      ],
       "correctAnswerIndex": 1
     },
     {
       "question_id": 2,
       "title": "Which station is responsible for manufacturing or milling parts?",
+      "title_he": "איזה תחנה אחראית לייצור או קידוח חלקים?",
       "answers": [
         "Storage",
         "Review",
@@ -24,11 +34,19 @@
         "Assembly",
         "Transport"
       ],
+      "answers_he": [
+        "אחסון",
+        "בקרה",
+        "ייצור",
+        "הרכבה",
+        "הובלה"
+      ],
       "correctAnswerIndex": 2
     },
     {
       "question_id": 3,
       "title": "What is the main function of the Yaskawa Motoman robotic arm at the Review station?",
+      "title_he": "מהו התפקיד הראשי של זרוע הרובוט Yaskawa Motoman בתחנת הבקרה?",
       "answers": [
         "Transport carts between stations",
         "Assemble toy components",
@@ -36,12 +54,27 @@
         "Drill holes into rectangular components",
         "Return finished products to storage"
       ],
+      "answers_he": [
+        "להעביר עגלות בין תחנות",
+        "להרכיב חלקי צעצועים",
+        "לבחון את החלקים לאיכות באמצעות מצלמה",
+        "לקדוח חורים בחלקים מלבניים",
+        "להחזיר מוצרים גמורים לאחסון"
+      ],
       "correctAnswerIndex": 2
     },
     {
       "question_id": 4,
       "title": "Which arm robot operates at the Assembly station?",
+      "title_he": "איזו זרוע רובוטית פועלת בתחנת ההרכבה?",
       "answers": [
+        "SCORBOT-ER V Plus",
+        "Yaskawa Motoman GP8",
+        "BenchMill 6000",
+        "SCORA ER-14",
+        "ASRS 2"
+      ],
+      "answers_he": [
         "SCORBOT-ER V Plus",
         "Yaskawa Motoman GP8",
         "BenchMill 6000",
@@ -53,12 +86,20 @@
     {
       "question_id": 5,
       "title": "What is the role of the QR-CODE TRIG sensors in the production line?",
+      "title_he": "מהו תפקיד החיישנים QR-CODE TRIG בקו הייצור?",
       "answers": [
         "To measure cart speed",
         "To detect defective parts",
         "To scan QR codes confirming a cart’s arrival at a station",
         "To align components during assembly",
         "To record video footage for review"
+      ],
+      "answers_he": [
+        "למדוד את מהירות העגלות",
+        "לזהות חלקים פגומים",
+        "לסרוק קודי QR המאשרים את הגעת העגלה לתחנה",
+        "ליישר רכיבים במהלך ההרכבה",
+        "להקליט וידאו לסקירה"
       ],
       "correctAnswerIndex": 2
     }
