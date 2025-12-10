@@ -100,24 +100,22 @@ async function addQuizResult(quizResult, answerResults) {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        // 1️⃣ Generate new numeric quizResult_id
         const lastQuiz = await QuizResult.findOne().sort({ quizResult_id: -1 }).exec();
         const newQuizId = lastQuiz ? lastQuiz.quizResult_id + 1 : 1;
 
-        // 2️⃣ Create QuizResult document with numeric ID
         const newQuizResultDocument = new QuizResult({
             quizResult_id: newQuizId,
             username: quizResult.username,
+            groupNumber: quizResult.groupNumber,
             totalDurationSec: quizResult.totalDurationSec,
             timestamp: quizResult.timestamp || new Date()
         });
 
         const savedQuizResult = await newQuizResultDocument.save({ session });
 
-        // 3️⃣ Create AnswerResult documents using numeric quizResult_id
         const answerResultDocuments = answerResults.map(ar => new AnswerResult({
             question_id: ar.question_id,
-            quizResult_id: savedQuizResult.quizResult_id, // <-- use numeric ID
+            quizResult_id: savedQuizResult.quizResult_id,
             selectedAnswer: ar.selectedAnswer,
             correctAnswer: ar.correctAnswer,
             durationSec: ar.durationSec
