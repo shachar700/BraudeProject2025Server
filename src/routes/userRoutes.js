@@ -38,15 +38,14 @@ router.post('/addBadge', async (req, res) => {
 
 // POST /addQuizResult , params: QuizResult, List<AnswerResult>
 router.post('/addQuizResult', async (req, res) => {
-    const body = req.body;
-    const quizResult = body["QuizResult"];
-    const answerResults = body["AnswerResults"];
-    if (!quizResult || !answerResults) return res.status(400).json({ message: 'quizResult and answerResults are required' });
+    const {QuizResult, AnswerResults} = req.body;
 
-    logMessage(` POST '/addQuizResult' :: Received QuizResult from ${quizResult.username}`)
+    if (!QuizResult || !AnswerResults) return res.status(400).json({ message: 'quizResult and answerResults are required' });
+
+    logMessage(` POST '/addQuizResult' :: Received QuizResult from ${QuizResult.username}`)
 
     try {
-        const success = await addQuizResult(quizResult, answerResults);
+        const success = await addQuizResult(QuizResult, AnswerResults);
         res.status(success ? 200 : 500).json({ message: success ? 'Quiz result added successfully' : 'Failed to add quiz result' });
     } catch (err) {
         console.error(err);
