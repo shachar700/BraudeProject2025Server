@@ -6,7 +6,7 @@
     {
       "question_id": 1,
       "title": "What is the primary purpose of the production line in Lab D106?",
-      "title_he": "מהו המטרה העיקרית של קו הייצור במעבדה D106?",
+      "title_he": "מהו המטרה העיקרית של קו הייצור במעבדה D601?",
       "answers": [
         "To produce commercial goods for sale",
         "To simulate automated material handling and manufacturing processes",
@@ -77,8 +77,8 @@
       "answers_he": [
         "SCORBOT-ER V Plus",
         "Yaskawa Motoman GP8",
-        "BenchMill 6000",
-        "SCORA ER-14",
+        "BenchMill 0006",
+        "SCORA ER-41",
         "ASRS 2"
       ],
       "correctAnswerIndex": 0
